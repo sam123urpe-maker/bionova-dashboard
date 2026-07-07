@@ -35,15 +35,22 @@ export function getDateRange(periodo: Periodo, fecha?: string): DateRange {
       return { start: startOfDay(ayer), end: endOfDay(ayer) };
     }
     case "semana": {
-      const start = new Date(now);
+      // If a specific date is provided (from week picker), use that week
+      const base = fecha ? new Date(fecha + "T00:00:00") : now;
+      const start = new Date(base);
       const dayOfWeek = start.getDay();
       const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // lunes = 0
       start.setDate(start.getDate() - diff);
-      return { start: startOfDay(start), end: endOfDay(now) };
+      const end = new Date(start);
+      end.setDate(end.getDate() + 6);
+      return { start: startOfDay(start), end: endOfDay(end) };
     }
     case "mes": {
-      const start = new Date(now.getFullYear(), now.getMonth(), 1);
-      return { start: startOfDay(start), end: endOfDay(now) };
+      // If a specific date is provided (from month picker), use that month
+      const base = fecha ? new Date(fecha + "T00:00:00") : now;
+      const start = new Date(base.getFullYear(), base.getMonth(), 1);
+      const end = new Date(base.getFullYear(), base.getMonth() + 1, 0);
+      return { start: startOfDay(start), end: endOfDay(end) };
     }
     case "personalizado":
       if (fecha) {
@@ -58,9 +65,9 @@ export function getDateRange(periodo: Periodo, fecha?: string): DateRange {
 }
 
 export function filterByDate(clientes: Cliente[], periodo: Periodo, fecha?: string): Cliente[] {
-  const { start, end } = getDateRange(periodo, fecha);
-
   if (periodo === "todo") return clientes;
+
+  const { start, end } = getDateRange(periodo, fecha);
 
   return clientes.filter((c) => {
     if (!c.ultima_interaccion) return false;
@@ -102,12 +109,3 @@ export function getMonthRevenue(clientes: Cliente[]): number {
 export function getLimaDateString(): string {
   return getLimaNow().toISOString().split("T")[0];
 }
-
-export const PERIODO_LABELS: Record<Periodo, string> = {
-  hoy: "Hoy",
-  ayer: "Ayer",
-  semana: "Esta semana",
-  mes: "Este mes",
-  todo: "Todo",
-  personalizado: "Día",
-};
