@@ -1,6 +1,6 @@
 ---
-name: bot-generator
-description: Genera workflows de n8n personalizados para clientes de BioNova a partir de un config_json y un workflow base.
+name: SKILL-HACER-BOT
+description: Genera workflows de n8n personalizados para clientes de BioNova a partir de un config_json y un workflow base. Se invoca cuando el admin dice "haz los flujos", "genera el bot", "procesa las solicitudes", o pide crear workflows para clientes.
 type: skill
 ---
 

@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from "react";
 import Image from "next/image";
-import { Wifi, LogOut, Copy, Check, Key, ChevronDown } from "lucide-react";
+import { Wifi, LogOut, Copy, Check, Key, ChevronDown, Package, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
 import type { DashboardUser } from "@/app/dashboard";
 
@@ -82,6 +83,26 @@ export function Header({
                 </div>
               )}
             </div>
+          )}
+
+          {/* Admin: Panel de Bots */}
+          {user.isAdmin && (
+            <>
+              <Link
+                href="/admin/bots"
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-amber-600 transition-colors px-2 py-1 rounded-lg hover:bg-amber-50"
+              >
+                <Package className="w-3.5 h-3.5" />
+                Bots
+              </Link>
+              <Link
+                href="/crear-agente"
+                className="flex items-center gap-1.5 text-xs font-medium bg-amber-600 hover:bg-amber-700 text-white px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                Crear Agente
+              </Link>
+            </>
           )}
 
           {/* Stats */}
