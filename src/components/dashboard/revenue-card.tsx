@@ -21,7 +21,7 @@ export function RevenueCard({
     <Card className="p-5">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2.5 rounded-lg bg-green-100 text-green-700">
-          <Image src="/money.svg" alt="Ingresos" width={20} height={20} />
+          <Image src="/money.svg" alt="Ingresos" width={48} height={48} />
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Ingresos del periodo</p>
