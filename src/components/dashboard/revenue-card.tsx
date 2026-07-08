@@ -1,6 +1,7 @@
 "use client";
 
-import { Banknote, Heart, Sparkles } from "lucide-react";
+import Image from "next/image";
+import { Heart, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { computeRevenue } from "@/lib/revenue";
 import type { Lead } from "@/types/client";
@@ -20,7 +21,7 @@ export function RevenueCard({
     <Card className="p-5">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2.5 rounded-lg bg-green-100 text-green-700">
-          <Banknote className="w-5 h-5" />
+          <Image src="/money.svg" alt="Ingresos" width={20} height={20} />
         </div>
         <div>
           <p className="text-sm font-semibold text-slate-700">Ingresos del periodo</p>
