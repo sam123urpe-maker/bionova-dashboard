@@ -156,6 +156,30 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
 
   const isActive = (p: Periodo) => periodo === p && expanded === null;
 
+  // Dynamic labels for Semana and Mes
+  const semanaLabel = (() => {
+    if (periodo !== "semana") return "Semana";
+    if (!fecha) return "Esta semana";
+    const start = new Date(fecha + "T00:00:00");
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    const fmt = (d: Date) =>
+      d.toLocaleDateString("es-PE", { day: "numeric", month: "short" });
+    return `${fmt(start)} - ${fmt(end)}`;
+  })();
+
+  const mesLabel = (() => {
+    if (periodo !== "mes") return "Mes";
+    if (!fecha) return "Este mes";
+    const d = new Date(fecha + "T00:00:00");
+    const monthName = d.toLocaleDateString("es-PE", { month: "long" });
+    const now = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Lima" }));
+    if (d.getFullYear() !== now.getFullYear()) {
+      return `${monthName} ${d.getFullYear()}`;
+    }
+    return monthName.charAt(0).toUpperCase() + monthName.slice(1);
+  })();
+
   return (
     <div className="relative">
       {/* Glass background */}
@@ -197,7 +221,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             }`}
           >
             <CalendarDays className="w-4 h-4" />
-            Semana
+            {semanaLabel}
           </button>
 
           {/* Mes */}
@@ -210,7 +234,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             }`}
           >
             <CalendarRange className="w-4 h-4" />
-            Mes
+            {mesLabel}
           </button>
 
           {/* Todo */}
