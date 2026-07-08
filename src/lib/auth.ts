@@ -8,6 +8,7 @@ export interface ClienteRecord {
   whatsapp_numero: string | null;
   activo: boolean;
   bot_activo: boolean;
+  rol: "admin" | "cliente";
 }
 
 export interface AuthUser {
@@ -28,7 +29,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
   // Query clientes by email
   const { data: cliente } = await supabase
     .from("clientes")
-    .select("id, email, nombre, api_key, whatsapp_numero, activo, bot_activo")
+    .select("id, email, nombre, api_key, whatsapp_numero, activo, bot_activo, rol")
     .eq("email", user.email)
     .maybeSingle();
 
@@ -48,7 +49,7 @@ export async function getScopeClienteId(): Promise<string | null> {
   if (!auth) return null;
 
   // Admin sees all
-  if (auth.email === "admin@bionova.com") return null;
+  if (auth.cliente?.rol === "admin") return null;
 
   return auth.cliente?.id ?? null;
 }

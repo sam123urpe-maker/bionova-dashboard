@@ -7,13 +7,13 @@ import type { Mensaje } from "@/types/client";
 import { ImageLightbox } from "./image-lightbox";
 import { AudioPlayer } from "./audio-player";
 
-function formatMsgTime(ms: number): string {
-  const d = new Date(ms);
+function formatMsgTime(iso: string): string {
+  const d = new Date(iso);
   return d.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
 }
 
-function formatMsgDate(ms: number): string {
-  const d = new Date(ms);
+function formatMsgDate(iso: string): string {
+  const d = new Date(iso);
   const today = new Date();
   const yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
@@ -30,6 +30,7 @@ interface MessageViewerProps {
 
 export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
+  const [conversacionId, setConversacionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [lightboxUrl, setLightboxUrl] = useState<string | null>(null);
@@ -40,13 +41,31 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
   const bottomRef = useRef<HTMLDivElement>(null);
   const prevCountRef = useRef(0);
 
-  // Fetch messages
+  // Step 1: Find conversation by phone, then fetch messages
   const fetchMensajes = useCallback(async () => {
+    setLoading(true);
+
+    // Find conversation for this phone number
+    const { data: conv } = await supabase
+      .from("conversaciones")
+      .select("id")
+      .eq("telefono", telefono)
+      .maybeSingle();
+
+    if (!conv) {
+      setMensajes([]);
+      setConversacionId(null);
+      setLoading(false);
+      return;
+    }
+
+    setConversacionId(conv.id);
+
     const { data, error: err } = await supabase
       .from("mensajes")
       .select("*")
-      .eq("telefono", telefono)
-      .order("timestamp_ms", { ascending: true });
+      .eq("conversacion_id", conv.id)
+      .order("secuencia", { ascending: true });
 
     if (err) {
       setError(true);
@@ -63,13 +82,20 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
     fetchMensajes();
   }, [fetchMensajes]);
 
-  // Real-time subscription
+  // Real-time subscription on new messages for this conversation
   useEffect(() => {
+    if (!conversacionId) return;
+
     const channel = supabase
-      .channel(`mensajes-${telefono}`)
+      .channel(`mensajes-${conversacionId}`)
       .on(
         "postgres_changes",
-        { event: "INSERT", schema: "public", table: "mensajes", filter: `telefono=eq.${telefono}` },
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "mensajes",
+          filter: `conversacion_id=eq.${conversacionId}`,
+        },
         () => {
           fetchMensajes();
         },
@@ -79,14 +105,14 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [telefono, fetchMensajes]);
+  }, [conversacionId, fetchMensajes]);
 
   // Auto-scroll to bottom on first load
   useEffect(() => {
     if (!loading && mensajes.length > 0) {
       bottomRef.current?.scrollIntoView({ behavior: "auto" });
     }
-  }, [loading]); // Only on initial load
+  }, [loading]);
 
   // Track if user scrolled up; show "new message" indicator
   useEffect(() => {
@@ -124,7 +150,7 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
 
   // Group messages by date
   const grouped = mensajes.reduce<{ date: string; items: Mensaje[] }[]>((acc, m) => {
-    const dateLabel = formatMsgDate(m.timestamp_ms);
+    const dateLabel = formatMsgDate(m.timestamp);
     const last = acc[acc.length - 1];
     if (last && last.date === dateLabel) {
       last.items.push(m);
@@ -133,6 +159,8 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
     }
     return acc;
   }, []);
+
+  const isOutgoing = (remitente: string) => remitente === "bot" || remitente === "agente_humano";
 
   return (
     <>
@@ -209,76 +237,89 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
                   </span>
                 </div>
 
-                {group.items.map((m) => (
-                  <div
-                    key={m.id}
-                    className={`px-4 py-1 flex ${m.direccion === "saliente" ? "justify-end" : "justify-start"}`}
-                  >
+                {group.items.map((m) => {
+                  const outgoing = isOutgoing(m.remitente);
+                  return (
                     <div
-                      className={`max-w-[85%] ${
-                        m.direccion === "saliente"
-                          ? "bg-amber-500 text-white rounded-2xl rounded-br-md"
-                          : "bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-bl-md"
-                      } px-3.5 py-2 shadow-sm`}
+                      key={m.id}
+                      className={`px-4 py-1 flex ${outgoing ? "justify-end" : "justify-start"}`}
                     >
-                      {/* Text content */}
-                      {m.contenido && (
-                        <p className="text-sm whitespace-pre-wrap break-words">{m.contenido}</p>
-                      )}
-
-                      {/* Image */}
-                      {m.tipo === "imagen" && m.url && (
-                        <button
-                          onClick={() => setLightboxUrl(m.url)}
-                          className="mt-1 rounded-lg overflow-hidden block w-full max-w-[240px] hover:opacity-90 transition-opacity"
-                        >
-                          <img
-                            src={m.url}
-                            alt="Imagen"
-                            className="w-full h-auto max-h-[200px] object-cover rounded-lg"
-                            loading="lazy"
-                          />
-                        </button>
-                      )}
-
-                      {/* Audio */}
-                      {m.tipo === "audio" && m.url && (
-                        <AudioPlayer url={m.url} duracion={m.duracion_segundos} />
-                      )}
-
-                      {/* Video */}
-                      {m.tipo === "video" && m.url && (
-                        <video
-                          src={m.url}
-                          controls
-                          preload="metadata"
-                          className="mt-1 rounded-lg max-w-[240px] max-h-[200px]"
-                        />
-                      )}
-
-                      {/* Document */}
-                      {m.tipo === "documento" && m.url && (
-                        <a
-                          href={m.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="mt-1 flex items-center gap-2 text-sm underline opacity-80 hover:opacity-100"
-                        >
-                          {m.contenido || "Documento adjunto"}
-                        </a>
-                      )}
-
-                      {/* Timestamp */}
-                      <p
-                        className={`text-xs mt-1 ${
-                          m.direccion === "saliente" ? "text-white/70" : "text-slate-400"
-                        } text-right`}
+                      <div
+                        className={`max-w-[85%] ${
+                          outgoing
+                            ? "bg-amber-500 text-white rounded-2xl rounded-br-md"
+                            : "bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-bl-md"
+                        } px-3.5 py-2 shadow-sm`}
                       >
-                        {formatMsgTime(m.timestamp_ms)}
-                      </p>
+                        {/* Remitente label for agent messages */}
+                        {m.remitente === "agente_humano" && (
+                          <p className="text-xs text-white/60 mb-0.5">Agente</p>
+                        )}
+
+                        {/* Text content */}
+                        {m.contenido && (
+                          <p className="text-sm whitespace-pre-wrap break-words">{m.contenido}</p>
+                        )}
+
+                        {/* Image */}
+                        {m.tipo === "imagen" && m.url_adjunto && (
+                          <button
+                            onClick={() => setLightboxUrl(m.url_adjunto!)}
+                            className="mt-1 rounded-lg overflow-hidden block w-full max-w-[240px] hover:opacity-90 transition-opacity"
+                          >
+                            <img
+                              src={m.url_adjunto}
+                              alt="Imagen"
+                              className="w-full h-auto max-h-[200px] object-cover rounded-lg"
+                              loading="lazy"
+                            />
+                          </button>
+                        )}
+
+                        {/* Audio */}
+                        {m.tipo === "audio" && m.url_adjunto && (
+                          <AudioPlayer url={m.url_adjunto} duracion={m.duracion_segundos} />
+                        )}
+
+                        {/* Video */}
+                        {m.tipo === "video" && m.url_adjunto && (
+                          <video
+                            src={m.url_adjunto}
+                            controls
+                            preload="metadata"
+                            className="mt-1 rounded-lg max-w-[240px] max-h-[200px]"
+                          />
+                        )}
+
+                        {/* Document */}
+                        {m.tipo === "documento" && m.url_adjunto && (
+                          <a
+                            href={m.url_adjunto}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="mt-1 flex items-center gap-2 text-sm underline opacity-80 hover:opacity-100"
+                          >
+                            {m.contenido || "Documento adjunto"}
+                          </a>
+                        )}
+
+                        {/* Fallido indicator */}
+                        {m.estado_envio === "fallido" && (
+                          <p className="text-xs text-red-300 mt-1">Error al enviar</p>
+                        )}
+
+                        {/* Timestamp */}
+                        <p
+                          className={`text-xs mt-1 ${
+                            outgoing ? "text-white/70" : "text-slate-400"
+                          } text-right`}
+                        >
+                          {formatMsgTime(m.timestamp)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             ))}
 

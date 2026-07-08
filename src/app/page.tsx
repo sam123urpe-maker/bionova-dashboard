@@ -40,7 +40,7 @@ async function fetchPendingCount(): Promise<number> {
 export default async function HomePage() {
   const auth = await getAuthUser();
   const clienteId = auth?.cliente?.id ?? null;
-  const isAdmin = auth?.email === "admin@bionova.com";
+  const isAdmin = auth?.cliente?.rol === "admin";
 
   // Fetch solicitud activa for non-admin clients
   let solicitudActiva: SolicitudActiva | null = null;

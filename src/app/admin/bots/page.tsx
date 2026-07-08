@@ -10,7 +10,7 @@ export default async function AdminBotsPage() {
   const auth = await getAuthUser();
 
   // Only admin can access
-  if (!auth || auth.email !== "admin@bionova.com") {
+  if (!auth || auth.cliente?.rol !== "admin") {
     redirect("/");
   }
 

@@ -39,18 +39,39 @@ export interface SolicitudBot {
   procesado_at: string | null;
 }
 
-export interface Mensaje {
-  id: number;
+export interface Conversacion {
+  id: string;
+  cliente_id: string;
   telefono: string;
-  cliente_id?: string;
-  direccion: "entrante" | "saliente";
+  nombre_contacto: string | null;
+  ultima_actividad: string;
+  created_at: string;
+}
+
+export interface Mensaje {
+  id: string;
+  cliente_id: string;
+  conversacion_id: string;
+  wa_message_id: string;
+  secuencia: number;
+  remitente: "contacto" | "bot" | "agente_humano";
   tipo: "texto" | "imagen" | "audio" | "video" | "documento";
   contenido: string | null;
-  url: string | null;
+  url_adjunto: string | null;
   duracion_segundos: number | null;
-  whatsapp_msg_id: string | null;
-  timestamp_ms: number;
-  creado_en: string;
+  estado_envio: "pendiente" | "enviado" | "fallido";
+  timestamp: string;
+  created_at: string;
+}
+
+export interface MensajeFallido {
+  id: string;
+  cliente_id: string | null;
+  payload_original: Record<string, unknown>;
+  motivo_error: string;
+  intentos: number;
+  resuelto: boolean;
+  created_at: string;
 }
 
 export interface SolicitudBotInsert {
