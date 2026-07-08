@@ -4,11 +4,11 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase/client";
-import { Mail, User, Phone, Loader2 } from "lucide-react";
+import { Mail, User, Phone, Lock, Loader2 } from "lucide-react";
 
 export default function RegistroPage() {
-  const [form, setForm] = useState({ email: "", nombre: "", whatsapp: "" });
-  const [sent, setSent] = useState(false);
+  const [form, setForm] = useState({ email: "", nombre: "", whatsapp: "", password: "" });
+  const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -21,10 +21,10 @@ export default function RegistroPage() {
     setError("");
     setLoading(true);
 
-    const { error: err } = await supabase.auth.signInWithOtp({
+    const { error: err } = await supabase.auth.signUp({
       email: form.email,
+      password: form.password,
       options: {
-        emailRedirectTo: `${location.origin}/auth/callback`,
         data: {
           nombre: form.nombre,
           whatsapp_numero: form.whatsapp || null,
@@ -37,7 +37,7 @@ export default function RegistroPage() {
     if (err) {
       setError(err.message);
     } else {
-      setSent(true);
+      setDone(true);
     }
   }
 
@@ -54,22 +54,22 @@ export default function RegistroPage() {
             priority
           />
           <h1 className="text-xl font-semibold text-slate-800">
-            {sent ? "Revisa tu correo" : "Registro"}
+            {done ? "Cuenta creada" : "Registro"}
           </h1>
           <p className="text-sm text-slate-500 mt-2">
-            {sent
-              ? `Enviamos un enlace magico a ${form.email}. Haz clic para activar tu cuenta.`
+            {done
+              ? `Listo ${form.nombre}. Tu API Key se genero automaticamente. Inicia sesion para verla.`
               : "Crea tu cuenta para obtener tu API Key."}
           </p>
         </div>
 
-        {sent ? (
-          <button
-            onClick={() => { setSent(false); setForm({ email: "", nombre: "", whatsapp: "" }); }}
-            className="w-full text-sm text-slate-500 hover:text-slate-700 transition-colors"
+        {done ? (
+          <Link
+            href="/login"
+            className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center"
           >
-            Usar otro correo
-          </button>
+            Ir a iniciar sesion
+          </Link>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -109,6 +109,25 @@ export default function RegistroPage() {
             </div>
 
             <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-1.5">
+                Contraseña
+              </label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <input
+                  id="password"
+                  type="password"
+                  required
+                  minLength={6}
+                  value={form.password}
+                  onChange={(e) => setField("password", e.target.value)}
+                  placeholder="Minimo 6 caracteres"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                />
+              </div>
+            </div>
+
+            <div>
               <label htmlFor="whatsapp" className="block text-sm font-medium text-slate-700 mb-1.5">
                 WhatsApp <span className="text-slate-400 font-normal">(opcional)</span>
               </label>
@@ -131,12 +150,10 @@ export default function RegistroPage() {
 
             <button
               type="submit"
-              disabled={loading || !form.email || !form.nombre}
+              disabled={loading || !form.email || !form.password || !form.nombre}
               className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
             >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : null}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
               Crear cuenta
             </button>
 
