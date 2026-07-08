@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { Check } from "lucide-react";
+import { Check, Package } from "lucide-react";
+import Link from "next/link";
 import Lottie from "lottie-react";
 import rocketAnimationData from "@/../public/animations/robot-building.json";
 import chatbotAnimationData from "@/../public/animations/live-chatbot.json";
@@ -233,6 +234,81 @@ export function BotBuildingBanner({
               {estado === "pendiente" ? "En revisión" : "En construcción"}
             </span>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const ADMIN_BANNER_FRASES = [
+  "Me estoy armando...",
+  "Aprendiendo sobre nuevos cursos...",
+  "Configurando medios de pago...",
+  "Preparando respuestas automáticas...",
+  "Casi listo para vender 24/7...",
+];
+
+/**
+ * Banner para el admin en el dashboard principal cuando hay bots en construcción.
+ * Muestra la animación del chatbot con frases que se turnan cada 5 segundos.
+ */
+export function AdminBotsBanner({ count }: { count: number }) {
+  const [fraseIdx, setFraseIdx] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setFraseIdx((prev) => (prev + 1) % ADMIN_BANNER_FRASES.length);
+        setVisible(true);
+      }, 500);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5">
+      <div className="flex items-center gap-5">
+        {/* Chatbot Lottie Animation */}
+        <div className="shrink-0 w-20 h-20 -mt-1 -ml-1">
+          <Lottie
+            animationData={chatbotAnimationData}
+            loop={true}
+            className="w-20 h-20"
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h3 className="text-base font-semibold text-amber-800">
+              {count} bot{count !== 1 ? "s" : ""} en construcción
+            </h3>
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-xs font-medium text-amber-700">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              Pendiente
+            </span>
+          </div>
+
+          {/* Cycling phrase */}
+          <div className="relative h-5 mt-1.5 overflow-hidden">
+            <p
+              className={`absolute inset-0 text-sm text-amber-600 transition-all duration-500 ${
+                visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+              }`}
+            >
+              {ADMIN_BANNER_FRASES[fraseIdx]}
+            </p>
+          </div>
+
+          <Link
+            href="/admin/bots"
+            className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors"
+          >
+            <Package className="w-3.5 h-3.5" />
+            Ir al panel de bots
+          </Link>
         </div>
       </div>
     </div>

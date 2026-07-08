@@ -28,6 +28,15 @@ async function fetchLeads(clienteId: string | null): Promise<Lead[]> {
   return (data as Lead[]) ?? [];
 }
 
+async function fetchPendingCount(): Promise<number> {
+  const supabase = await createClient();
+  const { count } = await supabase
+    .from("solicitudes_bot")
+    .select("*", { count: "exact", head: true })
+    .in("estado", ["pendiente", "procesando"]);
+  return count ?? 0;
+}
+
 export default async function HomePage() {
   const auth = await getAuthUser();
   const clienteId = auth?.cliente?.id ?? null;
@@ -38,6 +47,9 @@ export default async function HomePage() {
   if (!isAdmin && clienteId) {
     solicitudActiva = await getSolicitudActiva(clienteId);
   }
+
+  // Admin: fetch count of pending bot requests
+  const pendingBotsCount = isAdmin ? await fetchPendingCount() : 0;
 
   // For non-admin users without a cliente record, return empty
   if (!isAdmin && !clienteId) {
@@ -50,6 +62,7 @@ export default async function HomePage() {
           isAdmin: false,
         }}
         solicitudActiva={null}
+        pendingBotsCount={0}
       />
     );
   }
@@ -66,6 +79,7 @@ export default async function HomePage() {
         isAdmin,
       }}
       solicitudActiva={solicitudActiva}
+      pendingBotsCount={pendingBotsCount}
     />
   );
 }

@@ -13,7 +13,7 @@ import { RevenueCard } from "@/components/dashboard/revenue-card";
 import { StatusDonut } from "@/components/dashboard/charts/status-donut";
 import { KitBar } from "@/components/dashboard/charts/kit-bar";
 import { ClientsTable } from "@/components/dashboard/table/clients-table";
-import { BotBuildingBanner } from "@/components/dashboard/bot-building";
+import { BotBuildingBanner, AdminBotsBanner } from "@/components/dashboard/bot-building";
 import { filterByDate, getLimaDateString, getWeekRevenue, getMonthRevenue } from "@/lib/date";
 import type { Periodo } from "@/lib/date";
 import { Sparkles, BarChart3, Table2, TrendingUp } from "lucide-react";
@@ -28,10 +28,12 @@ export function Dashboard({
   initialLeads,
   user,
   solicitudActiva,
+  pendingBotsCount,
 }: {
   initialLeads: Lead[];
   user: DashboardUser;
   solicitudActiva: SolicitudActiva | null;
+  pendingBotsCount: number;
 }) {
   const scopeId = user.isAdmin ? null : (user.cliente?.id ?? undefined);
   const { leads, isLive } = useRealtime(initialLeads, scopeId);
@@ -106,6 +108,10 @@ export function Dashboard({
       {/* Normal dashboard (admin or client with active bot) */}
       {!showLockedDashboard && (
         <main className="max-w-7xl mx-auto px-4 py-6 space-y-4">
+          {/* Admin: show pending bots banner with chatbot animation */}
+          {user.isAdmin && pendingBotsCount > 0 && (
+            <AdminBotsBanner count={pendingBotsCount} />
+          )}
           <DateFilter
             periodo={periodo}
             setPeriodo={setPeriodo}
