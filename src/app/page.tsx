@@ -1,7 +1,7 @@
 import { Dashboard } from "./dashboard";
 import type { Lead } from "@/types/client";
-import type { ClienteRecord } from "@/lib/auth";
-import { getAuthUser } from "@/lib/auth";
+import { getAuthUser, getSolicitudActiva } from "@/lib/auth";
+import type { SolicitudActiva } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +14,6 @@ async function fetchLeads(clienteId: string | null): Promise<Lead[]> {
     .select("*")
     .order("ultima_interaccion_ms", { ascending: false });
 
-  // Non-admin users only see their own leads
   if (clienteId) {
     query = query.eq("cliente_id", clienteId);
   }
@@ -34,6 +33,12 @@ export default async function HomePage() {
   const clienteId = auth?.cliente?.id ?? null;
   const isAdmin = auth?.email === "admin@bionova.com";
 
+  // Fetch solicitud activa for non-admin clients
+  let solicitudActiva: SolicitudActiva | null = null;
+  if (!isAdmin && clienteId) {
+    solicitudActiva = await getSolicitudActiva(clienteId);
+  }
+
   // For non-admin users without a cliente record, return empty
   if (!isAdmin && !clienteId) {
     return (
@@ -44,6 +49,7 @@ export default async function HomePage() {
           cliente: null,
           isAdmin: false,
         }}
+        solicitudActiva={null}
       />
     );
   }
@@ -59,6 +65,7 @@ export default async function HomePage() {
         cliente: auth?.cliente ?? null,
         isAdmin,
       }}
+      solicitudActiva={solicitudActiva}
     />
   );
 }

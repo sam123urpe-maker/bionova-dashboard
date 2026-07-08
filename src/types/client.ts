@@ -14,3 +14,41 @@ export interface Lead {
 export type EstadoFilter = Lead["estado"] | "todos";
 export type KitFilter = Lead["kit"] | "todos";
 export type OfertaFilter = Lead["recibio_oferta"] | "todos";
+
+export interface MedioPago {
+  tipo: "yape" | "plin" | "transferencia_bancaria" | "otro";
+  dato: string;
+  titular: string;
+}
+
+export interface SolicitudBot {
+  id: string;
+  cliente_id: string;
+  nombre_curso: string;
+  descripcion_curso: string | null;
+  precio_oferta: number;
+  precio_regular: number;
+  moneda: string;
+  medios_pago: MedioPago[];
+  link_entrega: string | null;
+  bonos_extras: string[] | null;
+  mensaje_bienvenida: string | null;
+  config_json: Record<string, unknown>;
+  estado: "pendiente" | "procesando" | "entregado";
+  created_at: string;
+  procesado_at: string | null;
+}
+
+export interface SolicitudBotInsert {
+  cliente_id: string;
+  nombre_curso: string;
+  descripcion_curso: string | null;
+  precio_oferta: number;
+  precio_regular: number;
+  moneda: string;
+  medios_pago: MedioPago[];
+  link_entrega: string | null;
+  bonos_extras: string[] | null;
+  mensaje_bienvenida: string | null;
+  config_json: Record<string, unknown>;
+}

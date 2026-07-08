@@ -7,6 +7,7 @@ export interface ClienteRecord {
   api_key: string;
   whatsapp_numero: string | null;
   activo: boolean;
+  bot_activo: boolean;
 }
 
 export interface AuthUser {
@@ -27,7 +28,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
   // Query clientes by email
   const { data: cliente } = await supabase
     .from("clientes")
-    .select("id, email, nombre, api_key, whatsapp_numero, activo")
+    .select("id, email, nombre, api_key, whatsapp_numero, activo, bot_activo")
     .eq("email", user.email)
     .maybeSingle();
 
@@ -50,4 +51,31 @@ export async function getScopeClienteId(): Promise<string | null> {
   if (auth.email === "admin@bionova.com") return null;
 
   return auth.cliente?.id ?? null;
+}
+
+export interface SolicitudActiva {
+  id: string;
+  estado: "pendiente" | "procesando" | "entregado";
+  nombre_curso: string;
+  created_at: string;
+}
+
+/**
+ * Get the active bot request for a client, if any.
+ * Returns the most recent solicitud that is NOT 'entregado', or null.
+ */
+export async function getSolicitudActiva(
+  clienteId: string,
+): Promise<SolicitudActiva | null> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("solicitudes_bot")
+    .select("id, estado, nombre_curso, created_at")
+    .eq("cliente_id", clienteId)
+    .in("estado", ["pendiente", "procesando"])
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return data as SolicitudActiva | null;
 }
