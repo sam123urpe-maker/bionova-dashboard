@@ -262,7 +262,7 @@ En cada workflow de n8n (suerte, remedios):
 
 3. **Asegurar que los datos** que llegan al Code node incluyan: `cliente_id`, `telefono`, `wa_message_id`, `remitente`, `tipo`, `contenido`, `url_adjunto` (si es media)
 
-4. **Timezone fix**: usar `$now.setZone('America/Lima').toISOString()` para timestamps (NO `toFormat()` sin timezone)
+4. ~~**Timezone fix**~~ ✅ aplicar `$now.setZone('America/Lima').toISOString()` — ya ajustado
 
 ### Mapeo de datos para el Code node
 
@@ -456,8 +456,8 @@ Seguir la guía en **`n8n_integracion_guide.md`**:
 
 **Sin esto, no hay datos en `mensajes`** → el visor se queda vacío.
 
-### 3. Timezone fix en n8n
-Cambiar `$now.setZone('America/Lima').toFormat('yyyy-LL-dd HH:mm:ss')` por `$now.setZone('America/Lima').toISOString()` para que los timestamps se guarden con timezone correcto (actualmente están 5 horas atrás).
+### 3. ~~Timezone fix en n8n~~ ✅ COMPLETADO
+~~Cambiar `$now.setZone('America/Lima').toFormat('yyyy-LL-dd HH:mm:ss')` por `$now.setZone('America/Lima').toISOString()`~~ → Ya ajustado por el usuario.
 
 ### 4. Próxima sesión: conectar n8n MCP
 Para que pueda modificar los workflows directamente desde Claude Code, necesito que el MCP de n8n esté configurado y conectado. Sin eso, solo puedo escribir guías.
