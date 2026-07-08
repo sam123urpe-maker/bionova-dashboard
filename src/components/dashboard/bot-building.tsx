@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Check } from "lucide-react";
 import Lottie from "lottie-react";
-import animationData from "@/../public/animations/robot-building.json";
+import animationData from "@/../public/animations/live-chatbot.json";
 
 const FRASES = [
   { text: "Me estoy armando...", delay: 0 },
