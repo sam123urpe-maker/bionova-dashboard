@@ -9,35 +9,35 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
-const COLORS: Record<Cliente["estado"], string> = {
+const COLORS: Record<Lead["estado"], string> = {
   pagado: "#10b981",
   esperando: "#f59e0b",
   abandonado: "#ef4444",
   falta: "#94a3b8",
 };
 
-const LABELS: Record<Cliente["estado"], string> = {
+const LABELS: Record<Lead["estado"], string> = {
   pagado: "Pagado",
   esperando: "Esperando",
   abandonado: "Abandonado",
   falta: "Falta",
 };
 
-export function StatusDonut({ clientes }: { clientes: Cliente[] }) {
+export function StatusDonut({ leads }: { leads: Lead[] }) {
   const counts: Record<string, number> = {};
-  for (const c of clientes) {
+  for (const c of leads) {
     counts[c.estado] = (counts[c.estado] || 0) + 1;
   }
 
   const data = Object.entries(counts).map(([key, value]) => ({
-    name: LABELS[key as Cliente["estado"]] || key,
+    name: LABELS[key as Lead["estado"]] || key,
     value,
-    color: COLORS[key as Cliente["estado"]] || "#cbd5e1",
+    color: COLORS[key as Lead["estado"]] || "#cbd5e1",
   }));
 
-  const total = clientes.length;
+  const total = leads.length;
 
   if (total === 0) {
     return (

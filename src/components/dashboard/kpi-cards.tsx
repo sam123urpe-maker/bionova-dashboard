@@ -2,7 +2,7 @@
 
 import { Card } from "@/components/ui/card";
 import { Users, CheckCircle, XCircle, Clock, AlertCircle } from "lucide-react";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
 interface KpiData {
   total: number;
@@ -12,13 +12,13 @@ interface KpiData {
   falta: number;
 }
 
-function computeKpis(clientes: Cliente[]): KpiData {
+function computeKpis(leads: Lead[]): KpiData {
   return {
-    total: clientes.length,
-    pagado: clientes.filter((c) => c.estado === "pagado").length,
-    abandonado: clientes.filter((c) => c.estado === "abandonado").length,
-    esperando: clientes.filter((c) => c.estado === "esperando").length,
-    falta: clientes.filter((c) => c.estado === "falta").length,
+    total: leads.length,
+    pagado: leads.filter((c) => c.estado === "pagado").length,
+    abandonado: leads.filter((c) => c.estado === "abandonado").length,
+    esperando: leads.filter((c) => c.estado === "esperando").length,
+    falta: leads.filter((c) => c.estado === "falta").length,
   };
 }
 
@@ -46,8 +46,8 @@ function KpiCard({
   );
 }
 
-export function KpiCards({ clientes }: { clientes: Cliente[] }) {
-  const kpis = computeKpis(clientes);
+export function KpiCards({ leads }: { leads: Lead[] }) {
+  const kpis = computeKpis(leads);
 
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">

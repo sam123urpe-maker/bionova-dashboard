@@ -10,18 +10,18 @@ import {
   ResponsiveContainer,
   Cell,
 } from "recharts";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
-export function KitBar({ clientes }: { clientes: Cliente[] }) {
-  const remedios = clientes.filter((c) => c.kit === "remedios").length;
-  const suerte = clientes.filter((c) => c.kit === "suerte").length;
+export function KitBar({ leads }: { leads: Lead[] }) {
+  const remedios = leads.filter((c) => c.kit === "remedios").length;
+  const suerte = leads.filter((c) => c.kit === "suerte").length;
 
   const data = [
     { name: "Remedios", value: remedios, color: "#d97706" },
     { name: "Suerte", value: suerte, color: "#92400e" },
   ];
 
-  if (clientes.length === 0) {
+  if (leads.length === 0) {
     return (
       <Card className="p-4">
         <h3 className="text-sm font-semibold text-slate-700 mb-3">Por Kit</h3>

@@ -3,18 +3,18 @@
 import { Banknote, Heart, Sparkles } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { computeRevenue } from "@/lib/revenue";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
 export function RevenueCard({
-  clientes,
+  leads,
   semanaRevenue,
   mesRevenue,
 }: {
-  clientes: Cliente[];
+  leads: Lead[];
   semanaRevenue: number;
   mesRevenue: number;
 }) {
-  const { remedios, suerte, total } = computeRevenue(clientes);
+  const { remedios, suerte, total } = computeRevenue(leads);
 
   return (
     <Card className="p-5">

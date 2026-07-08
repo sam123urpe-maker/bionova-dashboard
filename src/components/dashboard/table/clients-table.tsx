@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { StatusBadge, OfertaBadge } from "./status-badge";
 import { TableFilters } from "./table-filters";
 import { TablePagination } from "./table-pagination";
-import type { Cliente, EstadoFilter, KitFilter, OfertaFilter } from "@/types/client";
+import type { Lead, EstadoFilter, KitFilter, OfertaFilter } from "@/types/client";
 
 const PAGE_SIZE = 20;
 
@@ -21,7 +21,7 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ClientsTable({ clientes }: { clientes: Cliente[] }) {
+export function ClientsTable({ leads }: { leads: Lead[] }) {
   const [estadoFilter, setEstadoFilter] = useState<EstadoFilter>("todos");
   const [kitFilter, setKitFilter] = useState<KitFilter>("todos");
   const [ofertaFilter, setOfertaFilter] = useState<OfertaFilter>("todos");
@@ -29,7 +29,7 @@ export function ClientsTable({ clientes }: { clientes: Cliente[] }) {
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
-    let result = clientes;
+    let result = leads;
     if (estadoFilter !== "todos") result = result.filter((c) => c.estado === estadoFilter);
     if (kitFilter !== "todos") result = result.filter((c) => c.kit === kitFilter);
     if (ofertaFilter !== "todos") result = result.filter((c) => c.recibio_oferta === ofertaFilter);
@@ -38,7 +38,7 @@ export function ClientsTable({ clientes }: { clientes: Cliente[] }) {
       result = result.filter((c) => c.telefono.toLowerCase().includes(term));
     }
     return result;
-  }, [clientes, estadoFilter, kitFilter, ofertaFilter, searchTerm]);
+  }, [leads, estadoFilter, kitFilter, ofertaFilter, searchTerm]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages);

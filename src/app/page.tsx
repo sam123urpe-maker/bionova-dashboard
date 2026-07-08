@@ -1,43 +1,64 @@
 import { Dashboard } from "./dashboard";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
+import type { ClienteRecord } from "@/lib/auth";
+import { getAuthUser } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
-async function fetchClientes(): Promise<Cliente[]> {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+async function fetchLeads(clienteId: string | null): Promise<Lead[]> {
+  const supabase = await createClient();
 
-  if (!url || !key) {
-    console.error("Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY");
+  let query = supabase
+    .from("leads")
+    .select("*")
+    .order("ultima_interaccion_ms", { ascending: false });
+
+  // Non-admin users only see their own leads
+  if (clienteId) {
+    query = query.eq("cliente_id", clienteId);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error("Supabase fetch error:", error);
     return [];
   }
 
-  try {
-    const res = await fetch(
-      `${url}/rest/v1/clientes?select=*&order=ultima_interaccion_ms.desc`,
-      {
-        headers: {
-          apikey: key,
-          Authorization: `Bearer ${key}`,
-        },
-        cache: "no-store",
-      }
-    );
-
-    if (!res.ok) {
-      console.error("Supabase fetch error:", res.status, await res.text());
-      return [];
-    }
-
-    const data = await res.json();
-    return data as Cliente[];
-  } catch (err) {
-    console.error("Supabase fetch failed:", err);
-    return [];
-  }
+  return (data as Lead[]) ?? [];
 }
 
 export default async function HomePage() {
-  const clientes = await fetchClientes();
-  return <Dashboard initialClientes={clientes} />;
+  const auth = await getAuthUser();
+  const clienteId = auth?.cliente?.id ?? null;
+  const isAdmin = auth?.email === "admin@bionova.com";
+
+  // For non-admin users without a cliente record, return empty
+  if (!isAdmin && !clienteId) {
+    return (
+      <Dashboard
+        initialLeads={[]}
+        user={{
+          email: auth?.email ?? "",
+          cliente: null,
+          isAdmin: false,
+        }}
+      />
+    );
+  }
+
+  // Admin sees all (clienteId = null), others see only their leads
+  const leads = await fetchLeads(isAdmin ? null : clienteId);
+
+  return (
+    <Dashboard
+      initialLeads={leads}
+      user={{
+        email: auth?.email ?? "",
+        cliente: auth?.cliente ?? null,
+        isAdmin,
+      }}
+    />
+  );
 }

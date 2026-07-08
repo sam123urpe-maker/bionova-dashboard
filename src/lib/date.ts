@@ -1,4 +1,4 @@
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
 export type Periodo = "hoy" | "ayer" | "semana" | "mes" | "todo" | "personalizado";
 
@@ -64,19 +64,19 @@ export function getDateRange(periodo: Periodo, fecha?: string): DateRange {
   }
 }
 
-export function filterByDate(clientes: Cliente[], periodo: Periodo, fecha?: string): Cliente[] {
-  if (periodo === "todo") return clientes;
+export function filterByDate(leads: Lead[], periodo: Periodo, fecha?: string): Lead[] {
+  if (periodo === "todo") return leads;
 
   const { start, end } = getDateRange(periodo, fecha);
 
-  return clientes.filter((c) => {
+  return leads.filter((c) => {
     if (!c.ultima_interaccion) return false;
     const d = new Date(c.ultima_interaccion);
     return d >= start && d <= end;
   });
 }
 
-export function getWeekRevenue(clientes: Cliente[]): number {
+export function getWeekRevenue(leads: Lead[]): number {
   const now = getLimaNow();
   const start = new Date(now);
   const dayOfWeek = start.getDay();
@@ -84,7 +84,7 @@ export function getWeekRevenue(clientes: Cliente[]): number {
   start.setDate(start.getDate() - diff);
   start.setHours(0, 0, 0, 0);
 
-  return clientes
+  return leads
     .filter((c) => {
       if (!c.ultima_interaccion || c.estado !== "pagado") return false;
       const d = new Date(c.ultima_interaccion);
@@ -93,11 +93,11 @@ export function getWeekRevenue(clientes: Cliente[]): number {
     .reduce((sum, c) => sum + (c.recibio_oferta === "recibiodos" ? 8 : 10), 0);
 }
 
-export function getMonthRevenue(clientes: Cliente[]): number {
+export function getMonthRevenue(leads: Lead[]): number {
   const now = getLimaNow();
   const start = new Date(now.getFullYear(), now.getMonth(), 1);
 
-  return clientes
+  return leads
     .filter((c) => {
       if (!c.ultima_interaccion || c.estado !== "pagado") return false;
       const d = new Date(c.ultima_interaccion);

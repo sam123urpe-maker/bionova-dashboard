@@ -1,22 +1,22 @@
 "use client";
 
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
-const ESTADO_COLORS: Record<Cliente["estado"], string> = {
+const ESTADO_COLORS: Record<Lead["estado"], string> = {
   pagado: "bg-emerald-100 text-emerald-700",
   esperando: "bg-amber-100 text-amber-700",
   abandonado: "bg-red-100 text-red-700",
   falta: "bg-slate-100 text-slate-600",
 };
 
-const ESTADO_LABELS: Record<Cliente["estado"], string> = {
+const ESTADO_LABELS: Record<Lead["estado"], string> = {
   pagado: "Pagado",
   esperando: "Esperando",
   abandonado: "Abandonado",
   falta: "Falta",
 };
 
-export function StatusBadge({ estado }: { estado: Cliente["estado"] }) {
+export function StatusBadge({ estado }: { estado: Lead["estado"] }) {
   return (
     <span
       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${ESTADO_COLORS[estado]}`}
@@ -26,13 +26,13 @@ export function StatusBadge({ estado }: { estado: Cliente["estado"] }) {
   );
 }
 
-const OFERTA_COLORS: Record<Cliente["recibio_oferta"], string> = {
+const OFERTA_COLORS: Record<Lead["recibio_oferta"], string> = {
   recibio: "bg-emerald-100 text-emerald-700",
   no_recibio: "bg-slate-100 text-slate-600",
   recibiodos: "bg-amber-100 text-amber-700",
 };
 
-const OFERTA_LABELS: Record<Cliente["recibio_oferta"], string> = {
+const OFERTA_LABELS: Record<Lead["recibio_oferta"], string> = {
   recibio: "Recibio",
   no_recibio: "No recibio",
   recibiodos: "Recibio dos",
@@ -41,7 +41,7 @@ const OFERTA_LABELS: Record<Cliente["recibio_oferta"], string> = {
 export function OfertaBadge({
   oferta,
 }: {
-  oferta: Cliente["recibio_oferta"];
+  oferta: Lead["recibio_oferta"];
 }) {
   return (
     <span

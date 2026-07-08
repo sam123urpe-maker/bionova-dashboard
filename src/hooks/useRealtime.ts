@@ -2,30 +2,40 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase/client";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
-export function useRealtime(initialData: Cliente[]) {
-  const [clientes, setClientes] = useState<Cliente[]>(initialData);
+/**
+ * @param initialData - SSR-fetched leads
+ * @param clienteId - If non-null, scopes refresh to this cliente_id. Null = all leads (admin).
+ */
+export function useRealtime(initialData: Lead[], clienteId?: string | null) {
+  const [leads, setLeads] = useState<Lead[]>(initialData);
   const [isLive, setIsLive] = useState(false);
 
   const refresh = useCallback(async () => {
-    const { data } = await supabase
-      .from("clientes")
+    let query = supabase
+      .from("leads")
       .select("*")
       .order("ultima_interaccion_ms", { ascending: false });
-    if (data) setClientes(data as Cliente[]);
-  }, []);
+
+    if (clienteId) {
+      query = query.eq("cliente_id", clienteId);
+    }
+
+    const { data } = await query;
+    if (data) setLeads(data as Lead[]);
+  }, [clienteId]);
 
   useEffect(() => {
-    setClientes(initialData);
+    setLeads(initialData);
   }, [initialData]);
 
   useEffect(() => {
     const channel = supabase
-      .channel("clientes-realtime")
+      .channel("leads-realtime")
       .on(
         "postgres_changes",
-        { event: "*", schema: "public", table: "clientes" },
+        { event: "*", schema: "public", table: "leads" },
         () => {
           refresh();
         }
@@ -39,5 +49,5 @@ export function useRealtime(initialData: Cliente[]) {
     };
   }, [refresh]);
 
-  return { clientes, isLive };
+  return { leads, isLive };
 }

@@ -1,5 +1,6 @@
-export interface Cliente {
+export interface Lead {
   id: number;
+  cliente_id?: string;
   telefono: string;
   kit: "remedios" | "suerte";
   estado: "pagado" | "abandonado" | "esperando" | "falta";
@@ -10,6 +11,6 @@ export interface Cliente {
   ultima_interaccion: string;
 }
 
-export type EstadoFilter = Cliente["estado"] | "todos";
-export type KitFilter = Cliente["kit"] | "todos";
-export type OfertaFilter = Cliente["recibio_oferta"] | "todos";
+export type EstadoFilter = Lead["estado"] | "todos";
+export type KitFilter = Lead["kit"] | "todos";
+export type OfertaFilter = Lead["recibio_oferta"] | "todos";

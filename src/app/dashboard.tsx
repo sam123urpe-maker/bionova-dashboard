@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
+import type { ClienteRecord } from "@/lib/auth";
 import { useRealtime } from "@/hooks/useRealtime";
 import { Header } from "@/components/dashboard/header";
 import { DateFilter } from "@/components/dashboard/date-filter";
@@ -13,16 +14,29 @@ import { ClientsTable } from "@/components/dashboard/table/clients-table";
 import { filterByDate, getLimaDateString, getWeekRevenue, getMonthRevenue } from "@/lib/date";
 import type { Periodo } from "@/lib/date";
 
-export function Dashboard({ initialClientes }: { initialClientes: Cliente[] }) {
-  const { clientes, isLive } = useRealtime(initialClientes);
+export interface DashboardUser {
+  email: string;
+  cliente: ClienteRecord | null;
+  isAdmin: boolean;
+}
+
+export function Dashboard({
+  initialLeads,
+  user,
+}: {
+  initialLeads: Lead[];
+  user: DashboardUser;
+}) {
+  const scopeId = user.isAdmin ? null : (user.cliente?.id ?? undefined);
+  const { leads, isLive } = useRealtime(initialLeads, scopeId);
   const [periodo, setPeriodo] = useState<Periodo>("hoy");
   const [fecha, setFecha] = useState(getLimaDateString());
 
-  const filtrados = filterByDate(clientes, periodo, fecha);
+  const filtrados = filterByDate(leads, periodo, fecha);
 
   return (
     <div className="min-h-screen">
-      <Header isLive={isLive} count={filtrados.length} />
+      <Header isLive={isLive} count={filtrados.length} user={user} />
       <main className="max-w-7xl mx-auto px-4 py-6 space-y-4">
         <DateFilter
           periodo={periodo}
@@ -30,19 +44,19 @@ export function Dashboard({ initialClientes }: { initialClientes: Cliente[] }) {
           fecha={fecha}
           setFecha={setFecha}
         />
-        <KpiCards clientes={filtrados} />
+        <KpiCards leads={filtrados} />
         <RevenueCard
-          clientes={filtrados}
-          semanaRevenue={getWeekRevenue(clientes)}
-          mesRevenue={getMonthRevenue(clientes)}
+          leads={filtrados}
+          semanaRevenue={getWeekRevenue(leads)}
+          mesRevenue={getMonthRevenue(leads)}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          <StatusDonut clientes={filtrados} />
-          <KitBar clientes={filtrados} />
+          <StatusDonut leads={filtrados} />
+          <KitBar leads={filtrados} />
         </div>
 
-        <ClientsTable clientes={filtrados} />
+        <ClientsTable leads={filtrados} />
       </main>
     </div>
   );

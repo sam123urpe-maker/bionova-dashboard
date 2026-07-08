@@ -1,4 +1,4 @@
-import type { Cliente } from "@/types/client";
+import type { Lead } from "@/types/client";
 
 interface KitRevenue {
   count: number;
@@ -11,13 +11,13 @@ interface RevenueBreakdown {
   total: number;
 }
 
-function precio(cliente: Cliente): number {
-  if (cliente.estado !== "pagado") return 0;
-  return cliente.recibio_oferta === "recibiodos" ? 8 : 10;
+function precio(lead: Lead): number {
+  if (lead.estado !== "pagado") return 0;
+  return lead.recibio_oferta === "recibiodos" ? 8 : 10;
 }
 
-export function computeRevenue(clientes: Cliente[]): RevenueBreakdown {
-  const pagados = clientes.filter((c) => c.estado === "pagado");
+export function computeRevenue(leads: Lead[]): RevenueBreakdown {
+  const pagados = leads.filter((c) => c.estado === "pagado");
 
   const remedios = pagados.filter((c) => c.kit === "remedios");
   const suerte = pagados.filter((c) => c.kit === "suerte");
