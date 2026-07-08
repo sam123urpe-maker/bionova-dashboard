@@ -39,6 +39,20 @@ export interface SolicitudBot {
   procesado_at: string | null;
 }
 
+export interface Mensaje {
+  id: number;
+  telefono: string;
+  cliente_id?: string;
+  direccion: "entrante" | "saliente";
+  tipo: "texto" | "imagen" | "audio" | "video" | "documento";
+  contenido: string | null;
+  url: string | null;
+  duracion_segundos: number | null;
+  whatsapp_msg_id: string | null;
+  timestamp_ms: number;
+  creado_en: string;
+}
+
 export interface SolicitudBotInsert {
   cliente_id: string;
   nombre_curso: string;

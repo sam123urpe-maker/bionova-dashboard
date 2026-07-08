@@ -14,6 +14,7 @@ import { StatusDonut } from "@/components/dashboard/charts/status-donut";
 import { KitBar } from "@/components/dashboard/charts/kit-bar";
 import { ClientsTable } from "@/components/dashboard/table/clients-table";
 import { BotBuildingBanner, AdminBotsBanner } from "@/components/dashboard/bot-building";
+import { MessageViewer } from "@/components/dashboard/messages/message-viewer";
 import { filterByDate, getLimaDateString, getWeekRevenue, getMonthRevenue } from "@/lib/date";
 import type { Periodo } from "@/lib/date";
 import { Sparkles, BarChart3, Table2, TrendingUp } from "lucide-react";
@@ -39,6 +40,7 @@ export function Dashboard({
   const { leads, isLive } = useRealtime(initialLeads, scopeId);
   const [periodo, setPeriodo] = useState<Periodo>("hoy");
   const [fecha, setFecha] = useState(getLimaDateString());
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   const filtrados = filterByDate(leads, periodo, fecha);
 
@@ -130,7 +132,15 @@ export function Dashboard({
             <KitBar leads={filtrados} />
           </div>
 
-          <ClientsTable leads={filtrados} />
+          <ClientsTable leads={filtrados} onSelectLead={setSelectedLead} />
+
+          {/* Message viewer slideover */}
+          {selectedLead && (
+            <MessageViewer
+              telefono={selectedLead.telefono}
+              onClose={() => setSelectedLead(null)}
+            />
+          )}
         </main>
       )}
     </div>

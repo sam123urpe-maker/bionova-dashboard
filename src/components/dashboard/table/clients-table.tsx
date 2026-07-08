@@ -21,7 +21,13 @@ function formatDate(iso: string): string {
   });
 }
 
-export function ClientsTable({ leads }: { leads: Lead[] }) {
+export function ClientsTable({
+  leads,
+  onSelectLead,
+}: {
+  leads: Lead[];
+  onSelectLead?: (lead: Lead) => void;
+}) {
   const [estadoFilter, setEstadoFilter] = useState<EstadoFilter>("todos");
   const [kitFilter, setKitFilter] = useState<KitFilter>("todos");
   const [ofertaFilter, setOfertaFilter] = useState<OfertaFilter>("todos");
@@ -90,9 +96,10 @@ export function ClientsTable({ leads }: { leads: Lead[] }) {
               paged.map((c) => (
                 <tr
                   key={c.id}
-                  className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
+                  onClick={() => onSelectLead?.(c)}
+                  className={`group border-b border-slate-50 hover:bg-slate-50/50 transition-colors ${onSelectLead ? "cursor-pointer" : ""}`}
                 >
-                  <td className="p-3 font-medium text-slate-800 sticky left-0 bg-white hover:bg-slate-50/50 z-10 whitespace-nowrap">
+                  <td className="p-3 font-medium text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50/50 z-10 whitespace-nowrap">
                     {c.telefono}
                   </td>
                   <td className="p-3 whitespace-nowrap">
