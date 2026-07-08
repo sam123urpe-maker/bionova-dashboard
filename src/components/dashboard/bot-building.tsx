@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Check } from "lucide-react";
 import Lottie from "lottie-react";
-import animationData from "@/../public/animations/live-chatbot.json";
+import rocketAnimationData from "@/../public/animations/robot-building.json";
+import chatbotAnimationData from "@/../public/animations/live-chatbot.json";
 
 const FRASES = [
   { text: "Me estoy armando...", delay: 0 },
@@ -86,7 +87,7 @@ export function BotBuilding({ nombreCurso, onDone }: BotBuildingProps) {
           <div className="relative w-48 h-48">
             {!completado ? (
               <Lottie
-                animationData={animationData}
+                animationData={rocketAnimationData}
                 loop={true}
                 className="w-48 h-48"
               />
@@ -152,9 +153,17 @@ export function BotBuilding({ nombreCurso, onDone }: BotBuildingProps) {
   );
 }
 
+const BANNER_FRASES = [
+  "Me estoy armando...",
+  "Aprendiendo sobre tu curso...",
+  "Configurando tus medios de pago...",
+  "Preparando respuestas automáticas...",
+  "Casi listo para vender 24/7...",
+];
+
 /**
- * Versión simplificada para el banner persistente en el dashboard.
- * Solo muestra el robot estático con texto informativo.
+ * Banner persistente en el dashboard para clientes cuyo bot está en construcción.
+ * Muestra la animación del chatbot con frases que se turnan cada 5 segundos.
  */
 export function BotBuildingBanner({
   nombreCurso,
@@ -165,6 +174,22 @@ export function BotBuildingBanner({
   estado: string;
   fecha: string;
 }) {
+  const [fraseIdx, setFraseIdx] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  // Cycle phrases every 5 seconds with fade out/in
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setFraseIdx((prev) => (prev + 1) % BANNER_FRASES.length);
+        setVisible(true);
+      }, 500);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   const fechaStr = new Date(fecha).toLocaleDateString("es-PE", {
     day: "numeric",
     month: "long",
@@ -174,21 +199,13 @@ export function BotBuildingBanner({
   return (
     <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6">
       <div className="flex items-start gap-5">
-        {/* Mini robot icon */}
-        <div className="shrink-0 w-16 h-16 relative">
-          <div className="absolute left-1/2 -translate-x-1/2 top-0 w-8 h-7 rounded-xl bg-amber-400">
-            <div className="flex gap-1.5 absolute top-1.5 left-1/2 -translate-x-1/2">
-              <div className="w-1.5 h-1.5 rounded-full bg-white" />
-              <div className="w-1.5 h-1.5 rounded-full bg-white" />
-            </div>
-          </div>
-          <div className="absolute left-1/2 -translate-x-1/2 top-8 w-10 h-8 rounded-xl bg-amber-500" />
-          <div className="absolute left-1 top-9 w-2.5 h-8 rounded-full bg-amber-400" />
-          <div className="absolute right-1 top-9 w-2.5 h-8 rounded-full bg-amber-400" />
-          <div className="absolute left-3 top-16 w-3 h-6 rounded-full bg-amber-600" />
-          <div className="absolute right-3 top-16 w-3 h-6 rounded-full bg-amber-600" />
-          {/* Antenna spark */}
-          <div className="absolute left-1/2 -translate-x-1/2 -top-1.5 w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+        {/* Chatbot Lottie Animation */}
+        <div className="shrink-0 w-24 h-24 -mt-2 -ml-2">
+          <Lottie
+            animationData={chatbotAnimationData}
+            loop={true}
+            className="w-24 h-24"
+          />
         </div>
 
         <div className="flex-1 min-w-0">
@@ -198,10 +215,18 @@ export function BotBuildingBanner({
           <p className="text-sm text-amber-700 mt-1">
             <strong>{nombreCurso}</strong> — solicitado el {fechaStr}
           </p>
-          <p className="text-sm text-amber-600 mt-2">
-            Te avisaremos por WhatsApp/email cuando esté listo. Tranquilo, nosotros nos
-            encargamos de todo.
-          </p>
+
+          {/* Cycling phrase */}
+          <div className="relative h-6 mt-2 overflow-hidden">
+            <p
+              className={`absolute inset-0 text-sm text-amber-600 transition-all duration-500 ${
+                visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
+              }`}
+            >
+              {BANNER_FRASES[fraseIdx]}
+            </p>
+          </div>
+
           <div className="mt-3 flex items-center gap-2">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-xs font-medium text-amber-700">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
