@@ -13,6 +13,11 @@ import {
   ArrowLeft,
   FileJson,
   FolderArchive,
+  Bot,
+  Cpu,
+  ImageIcon,
+  Webhook,
+  Key,
 } from "lucide-react";
 import type JSZipType from "jszip";
 import type { SolicitudBot } from "@/types/client";
@@ -243,6 +248,9 @@ export function BotsClient({
                     <th className="text-left px-4 py-3 font-medium text-slate-500">
                       Estado
                     </th>
+                    <th className="text-center px-4 py-3 font-medium text-slate-500">
+                      Infra
+                    </th>
                     <th className="text-right px-4 py-3 font-medium text-slate-500">
                       Acciones
                     </th>
@@ -293,6 +301,25 @@ export function BotsClient({
                           >
                             {estado.label}
                           </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-center gap-1">
+                            <span title={s.whatsapp_token ? "WhatsApp Token OK" : "WhatsApp Token falta"}>
+                              <Bot className={`w-3.5 h-3.5 ${s.whatsapp_token ? "text-green-500" : "text-red-300"}`} />
+                            </span>
+                            <span title={s.groq_api_key ? "Groq API Key OK" : "Groq API Key falta"}>
+                              <Cpu className={`w-3.5 h-3.5 ${s.groq_api_key ? "text-green-500" : "text-red-300"}`} />
+                            </span>
+                            <span title={s.imgbb_api_key ? "ImgBB API Key OK" : "ImgBB API Key falta"}>
+                              <ImageIcon className={`w-3.5 h-3.5 ${s.imgbb_api_key ? "text-green-500" : "text-red-300"}`} />
+                            </span>
+                            <span title={s.n8n_url ? "n8n URL OK" : "n8n URL falta"}>
+                              <Webhook className={`w-3.5 h-3.5 ${s.n8n_url ? "text-green-500" : "text-red-300"}`} />
+                            </span>
+                            <span title={s.n8n_api_key ? "n8n API Key OK" : "n8n API Key falta"}>
+                              <Key className={`w-3.5 h-3.5 ${s.n8n_api_key ? "text-green-500" : "text-red-300"}`} />
+                            </span>
+                          </div>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-end gap-1.5">

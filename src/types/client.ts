@@ -34,6 +34,12 @@ export interface SolicitudBot {
   link_entrega: string | null;
   bonos_extras: string[] | null;
   mensaje_bienvenida: string | null;
+  whatsapp_token: string | null;
+  whatsapp_phone_number_id: string | null;
+  groq_api_key: string | null;
+  imgbb_api_key: string | null;
+  n8n_url: string | null;
+  n8n_api_key: string | null;
   config_json: Record<string, unknown>;
   estado: "pendiente" | "procesando" | "entregado";
   created_at: string;
@@ -87,5 +93,11 @@ export interface SolicitudBotInsert {
   link_entrega: string | null;
   bonos_extras: string[] | null;
   mensaje_bienvenida: string | null;
+  whatsapp_token: string | null;
+  whatsapp_phone_number_id: string | null;
+  groq_api_key: string | null;
+  imgbb_api_key: string | null;
+  n8n_url: string | null;
+  n8n_api_key: string | null;
   config_json: Record<string, unknown>;
 }
