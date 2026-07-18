@@ -16,15 +16,11 @@ export default async function AdminBotsPage() {
 
   const supabase = await createClient();
 
-  // Fetch solicitudes from last 7 days by default
-  const hace7dias = new Date();
-  hace7dias.setDate(hace7dias.getDate() - 7);
-
+  // Fetch ALL pending + processing (sin filtro de fecha, igual que el banner)
   const { data: solicitudes } = await supabase
     .from("solicitudes_bot")
     .select("*")
     .in("estado", ["pendiente", "procesando"])
-    .gte("created_at", hace7dias.toISOString())
     .order("created_at", { ascending: false });
 
   // Fetch client names for display
