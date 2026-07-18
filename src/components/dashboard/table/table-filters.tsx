@@ -1,6 +1,7 @@
 "use client";
 
-import type { EstadoFilter, KitFilter, OfertaFilter } from "@/types/client";
+import { useMemo } from "react";
+import type { EstadoFilter, KitFilter, OfertaFilter, Lead } from "@/types/client";
 import { Search } from "lucide-react";
 
 interface Props {
@@ -12,6 +13,11 @@ interface Props {
   setOfertaFilter: (v: OfertaFilter) => void;
   searchTerm: string;
   setSearchTerm: (v: string) => void;
+  leads: Lead[];
+}
+
+function formatKitLabel(kit: string): string {
+  return kit.charAt(0).toUpperCase() + kit.slice(1);
 }
 
 export function TableFilters({
@@ -23,7 +29,13 @@ export function TableFilters({
   setOfertaFilter,
   searchTerm,
   setSearchTerm,
+  leads,
 }: Props) {
+  const kitOptions = useMemo(() => {
+    const unique = new Set(leads.map((l) => l.kit));
+    return Array.from(unique).sort();
+  }, [leads]);
+
   return (
     <div className="flex flex-nowrap items-center gap-2 overflow-x-auto pb-1">
       <div className="relative flex-shrink-0 min-w-[160px]">
@@ -55,8 +67,11 @@ export function TableFilters({
         className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
       >
         <option value="todos">Todos kits</option>
-        <option value="remedios">Remedios</option>
-        <option value="suerte">Suerte</option>
+        {kitOptions.map((kit) => (
+          <option key={kit} value={kit}>
+            {formatKitLabel(kit)}
+          </option>
+        ))}
       </select>
 
       <select

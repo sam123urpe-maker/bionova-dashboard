@@ -2,7 +2,7 @@ export interface Lead {
   id: number;
   cliente_id?: string;
   telefono: string;
-  kit: "remedios" | "suerte";
+  kit: string;
   estado: "pagado" | "abandonado" | "esperando" | "falta";
   ofertas_enviadas: number;
   ultima_interaccion_ms: number;
@@ -12,7 +12,7 @@ export interface Lead {
 }
 
 export type EstadoFilter = Lead["estado"] | "todos";
-export type KitFilter = Lead["kit"] | "todos";
+export type KitFilter = string | "todos";
 export type OfertaFilter = Lead["recibio_oferta"] | "todos";
 
 export interface MedioPago {
@@ -28,6 +28,7 @@ export interface SolicitudBot {
   descripcion_curso: string | null;
   precio_oferta: number;
   precio_regular: number;
+  precio_2da_oferta: number | null;
   moneda: string;
   medios_pago: MedioPago[];
   link_entrega: string | null;
@@ -80,6 +81,7 @@ export interface SolicitudBotInsert {
   descripcion_curso: string | null;
   precio_oferta: number;
   precio_regular: number;
+  precio_2da_oferta: number | null;
   moneda: string;
   medios_pago: MedioPago[];
   link_entrega: string | null;

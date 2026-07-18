@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { StatusBadge, OfertaBadge } from "./status-badge";
 import { TableFilters } from "./table-filters";
 import { TablePagination } from "./table-pagination";
+import { Phone, MessageCircle } from "lucide-react";
 import type { Lead, EstadoFilter, KitFilter, OfertaFilter } from "@/types/client";
 
 const PAGE_SIZE = 20;
@@ -62,15 +63,25 @@ export function ClientsTable({
           setOfertaFilter={(v) => { setOfertaFilter(v); setPage(1); }}
           searchTerm={searchTerm}
           setSearchTerm={(v) => { setSearchTerm(v); setPage(1); }}
+          leads={leads}
         />
       </div>
 
       <div className="overflow-x-auto">
+        {onSelectLead && (
+          <p className="text-xs text-slate-400 px-3 pt-2 flex items-center gap-1">
+            <MessageCircle className="w-3 h-3" />
+            Toca un numero para ver el chat
+          </p>
+        )}
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-100 bg-slate-50/50">
               <th className="text-left p-3 font-medium text-slate-600 sticky left-0 bg-slate-50/50 z-10 whitespace-nowrap">
-                Telefono
+                <span className="flex items-center gap-1">
+                  <Phone className="w-3.5 h-3.5" />
+                  Telefono
+                </span>
               </th>
               <th className="text-left p-3 font-medium text-slate-600 whitespace-nowrap">Kit</th>
               <th className="text-left p-3 font-medium text-slate-600 whitespace-nowrap">Estado</th>
@@ -100,7 +111,14 @@ export function ClientsTable({
                   className={`group border-b border-slate-50 hover:bg-slate-50/50 transition-colors ${onSelectLead ? "cursor-pointer" : ""}`}
                 >
                   <td className="p-3 font-medium text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50/50 z-10 whitespace-nowrap">
-                    {c.telefono}
+                    <span className="inline-flex items-center gap-1.5">
+                      {c.telefono}
+                      {onSelectLead && (
+                        <span title="Ver chat">
+                          <MessageCircle className="w-3.5 h-3.5 text-amber-500 opacity-40 group-hover:opacity-100 transition-opacity" />
+                        </span>
+                      )}
+                    </span>
                   </td>
                   <td className="p-3 whitespace-nowrap">
                     <span className="text-xs font-medium uppercase text-slate-500">

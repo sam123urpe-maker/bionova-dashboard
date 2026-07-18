@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Card } from "@/components/ui/card";
 import {
   BarChart,
@@ -12,14 +13,35 @@ import {
 } from "recharts";
 import type { Lead } from "@/types/client";
 
-export function KitBar({ leads }: { leads: Lead[] }) {
-  const remedios = leads.filter((c) => c.kit === "remedios").length;
-  const suerte = leads.filter((c) => c.kit === "suerte").length;
+const KIT_COLORS = [
+  "#d97706",
+  "#92400e",
+  "#2563eb",
+  "#7c3aed",
+  "#059669",
+  "#db2777",
+  "#ea580c",
+  "#4f46e5",
+];
 
-  const data = [
-    { name: "Remedios", value: remedios, color: "#d97706" },
-    { name: "Suerte", value: suerte, color: "#92400e" },
-  ];
+function formatKitName(kit: string): string {
+  return kit.charAt(0).toUpperCase() + kit.slice(1);
+}
+
+export function KitBar({ leads }: { leads: Lead[] }) {
+  const data = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const lead of leads) {
+      counts.set(lead.kit, (counts.get(lead.kit) ?? 0) + 1);
+    }
+    return Array.from(counts.entries())
+      .map(([name, value], i) => ({
+        name: formatKitName(name),
+        value,
+        color: KIT_COLORS[i % KIT_COLORS.length],
+      }))
+      .sort((a, b) => b.value - a.value);
+  }, [leads]);
 
   if (leads.length === 0) {
     return (

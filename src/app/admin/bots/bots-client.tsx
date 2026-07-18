@@ -264,12 +264,21 @@ export function BotsClient({
                           {s.nombre_curso}
                         </td>
                         <td className="px-4 py-3 text-slate-700 font-mono text-xs">
-                          {s.moneda} {s.precio_oferta}
-                          {s.precio_regular !== s.precio_oferta && (
-                            <span className="text-slate-400 line-through ml-1">
-                              {s.precio_regular}
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-emerald-600 font-medium">
+                              {s.moneda} {s.precio_oferta}
                             </span>
-                          )}
+                            {s.precio_2da_oferta != null && (
+                              <span className="text-amber-600">
+                                → {s.moneda} {s.precio_2da_oferta}
+                              </span>
+                            )}
+                            {s.precio_regular !== s.precio_oferta && (
+                              <span className="text-slate-400 line-through">
+                                {s.precio_regular}
+                              </span>
+                            )}
+                          </div>
                         </td>
                         <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">
                           {new Date(s.created_at).toLocaleDateString("es-PE", {

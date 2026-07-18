@@ -44,6 +44,7 @@ interface FormData {
   descripcion_curso: string;
   precio_oferta: string;
   precio_regular: string;
+  precio_2da_oferta: string;
   moneda: string;
   medios_pago: MedioPago[];
   link_entrega: string;
@@ -56,6 +57,7 @@ const FORM_INITIAL: FormData = {
   descripcion_curso: "",
   precio_oferta: "",
   precio_regular: "",
+  precio_2da_oferta: "",
   moneda: "PEN",
   medios_pago: [{ tipo: "yape", dato: "", titular: "" }],
   link_entrega: "",
@@ -160,6 +162,9 @@ export default function CrearAgentePage() {
 
     const precioOferta = parseFloat(form.precio_oferta);
     const precioRegular = parseFloat(form.precio_regular);
+    const precio2daOferta = form.precio_2da_oferta.trim()
+      ? parseFloat(form.precio_2da_oferta)
+      : null;
 
     if (isNaN(precioOferta) || precioOferta <= 0) {
       setError("El precio de oferta debe ser un número válido.");
@@ -168,6 +173,11 @@ export default function CrearAgentePage() {
     }
     if (isNaN(precioRegular) || precioRegular <= 0) {
       setError("El precio regular debe ser un número válido.");
+      setLoading(false);
+      return;
+    }
+    if (precio2daOferta !== null && (isNaN(precio2daOferta) || precio2daOferta <= 0)) {
+      setError("El precio 2da oferta debe ser un número válido.");
       setLoading(false);
       return;
     }
@@ -184,6 +194,7 @@ export default function CrearAgentePage() {
         descripcion: form.descripcion_curso.trim(),
         precio_oferta: precioOferta,
         precio_regular: precioRegular,
+        precio_2da_oferta: precio2daOferta,
         moneda: form.moneda,
       },
       medios_pago: mediosValidos,
@@ -199,6 +210,7 @@ export default function CrearAgentePage() {
       descripcion_curso: form.descripcion_curso.trim() || null,
       precio_oferta: precioOferta,
       precio_regular: precioRegular,
+      precio_2da_oferta: precio2daOferta,
       moneda: form.moneda,
       medios_pago: mediosValidos,
       link_entrega: form.link_entrega.trim() || null,
@@ -294,64 +306,88 @@ export default function CrearAgentePage() {
           </div>
 
           {/* Precios */}
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-1">
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Moneda
-              </label>
-              <select
-                value={form.moneda}
-                onChange={(e) => setField("moneda", e.target.value)}
-                className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-white transition-colors"
-              >
-                {MONEDAS.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Precio oferta <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  step="0.01"
-                  value={form.precio_oferta}
-                  onChange={(e) => setField("precio_oferta", e.target.value)}
-                  placeholder="10"
-                  className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
-                />
+          <div className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Moneda
+                </label>
+                <select
+                  value={form.moneda}
+                  onChange={(e) => setField("moneda", e.target.value)}
+                  className="w-full px-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 bg-white transition-colors"
+                >
+                  {MONEDAS.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
-                {MONEDA_SIMBOLOS[form.moneda]} HOY
-              </p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Precio regular <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input
-                  type="number"
-                  required
-                  min="0"
-                  step="0.01"
-                  value={form.precio_regular}
-                  onChange={(e) => setField("precio_regular", e.target.value)}
-                  placeholder="50"
-                  className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
-                />
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Precio oferta <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="0.01"
+                    value={form.precio_oferta}
+                    onChange={(e) => setField("precio_oferta", e.target.value)}
+                    placeholder="10"
+                    className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                  />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  {MONEDA_SIMBOLOS[form.moneda]} 1ra oferta
+                </p>
               </div>
-              <p className="text-xs text-slate-400 mt-1">
-                {MONEDA_SIMBOLOS[form.moneda]} Antes
-              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Precio real <span className="text-red-400">*</span>
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="number"
+                    required
+                    min="0"
+                    step="0.01"
+                    value={form.precio_regular}
+                    onChange={(e) => setField("precio_regular", e.target.value)}
+                    placeholder="50"
+                    className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                  />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  {MONEDA_SIMBOLOS[form.moneda]} Valor real
+                </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Precio 2da oferta
+                </label>
+                <div className="relative">
+                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={form.precio_2da_oferta}
+                    onChange={(e) => setField("precio_2da_oferta", e.target.value)}
+                    placeholder="8"
+                    className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                  />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  {MONEDA_SIMBOLOS[form.moneda]} Precio cierre
+                </p>
+              </div>
             </div>
           </div>
 
