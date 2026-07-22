@@ -1,219 +1,298 @@
 ---
 name: SKILL-HACER-BOT
-description: Genera workflows de n8n personalizados para clientes de BioNova a partir de un config_json y un workflow base. Se invoca cuando el admin dice "haz los flujos", "genera el bot", "procesa las solicitudes", o pide crear workflows para clientes.
+description: Genera workflows de n8n personalizados para clientes de BioNova a partir de un config_json de solicitudes_bot (Supabase). Se invoca cuando el admin dice "haz los flujos", "genera el bot", "procesa las solicitudes", o pide crear workflows para clientes.
 type: skill
 ---
 
 # Bot Generator — BioNova
 
-Dado un `config_json` de un cliente (el "mini JSON" generado desde el formulario
-"Crear Agente") y un workflow BASE de n8n de referencia, genera un workflow de n8n
-personalizado, listo para importar, para ese cliente específico.
+Dado un `config_json` de la tabla `solicitudes_bot` en Supabase (o un archivo JSON equivalente), genera un workflow de n8n personalizado listo para importar, partiendo del workflow base "FLUJO SUERTE Y REMEDIOS".
 
 ## Cuándo usar este skill
 
-Cuando el admin de BioNova (Lazz) te pida generar un bot para un cliente:
 - "Genera el bot para [cliente]"
 - "Crea el workflow de [nombre_curso]"
 - "Procesa las solicitudes pendientes"
-- O cuando el admin te pase directamente un archivo `config_json`
+- Cuando el admin pase directamente un `config_json`
 
-## Requisitos previos
+## Arquitectura actual (v4 — 2026-07-08)
 
-Antes de ejecutar, necesitas dos archivos:
+### Workflow base
+- **Nombre en n8n**: "FLUJO SUERTE Y REMEDIOS"
+- **ID**: `3OwwF6vlreDekIZn`
+- **Instancia**: `https://bright-kelpie.pikapod.net`
+- **Archivo local**: `C:\Users\Lazz.p\Desktop\claude-code-n8n\backend-suerte-remedios-v4.json`
+- **Nodos**: 111 | **Conexiones**: 105
 
-1. **config_json** — el mini JSON del cliente, generado por el formulario "Crear Agente".
-   Puede venir de:
-   - Un archivo `.json` en el escritorio (`~/Desktop/bots-clientes/`)
-   - La tabla `solicitudes_bot` en Supabase (columna `config_json`)
-   - Directamente pegado en el chat
-
-2. **Workflow BASE** — el JSON del workflow de n8n que sirve como plantilla.
-   - Por defecto: el workflow "FLUJO SUERTE Y REMEDIOS" (ID: `3OwwF6vlreDekIZn`)
-     en `https://bright-kelpie.pikapod.net`
-   - O una ruta local que el admin te indique
-
-Si el admin no te da la ruta del workflow base, pregúntale. No la asumas.
-
-## Paso a paso
-
-### Paso 1: Leer y validar el config_json
-
-Carga el `config_json` y verifica que tenga TODOS los campos obligatorios:
-
-| Campo | Tipo | Obligatorio |
-|-------|------|-------------|
-| `cliente_id` | string (UUID) | Sí |
-| `nombre_negocio` | string | Sí |
-| `api_key` | string | Sí |
-| `nombre_agente` | string | Sí |
-| `curso.nombre` | string | Sí |
-| `curso.descripcion` | string | Sí |
-| `curso.precio_oferta` | number | Sí |
-| `curso.precio_regular` | number | Sí |
-| `curso.moneda` | string | Sí |
-| `medios_pago` | array (min 1) | Sí |
-| `medios_pago[].tipo` | "yape" \| "plin" \| "transferencia_bancaria" \| "otro" | Sí |
-| `medios_pago[].dato` | string | Sí |
-| `medios_pago[].titular` | string | Sí |
-| `link_entrega` | string \| null | No (pero recomendado) |
-| `bonos_extras` | string[] \| null | No |
-| `mensaje_bienvenida` | string \| null | No |
-| `fecha_solicitud` | string (ISO 8601) | Sí |
-
-Si falta algún campo obligatorio, DETENTE y avisa claramente qué falta.
-No generes un workflow incompleto.
-
-### Paso 2: Obtener el workflow base
-
-Descarga el workflow base usando la API de n8n:
-
-```bash
-curl -H "X-N8N-API-KEY: <key>" \
-  https://bright-kelpie.pikapod.net/api/v1/workflows/3OwwF6vlreDekIZn
-```
-
-O lee el archivo local si el admin te dio una ruta.
-
-La API key de n8n es:
-```
-eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiOGVhNzQyMC1lMGViLTQ4OGUtYmJmZC02NmY4MzQyM2MxYzYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiY2ViNTI0ZmYtMGZhYS00YzE2LTkwMGEtZTIxOTMzMWQ1YWM5IiwiaWF0IjoxNzgzMjU1MzIzfQ.IZfvUIONdBictCLzjiAdX7BnWFYLZrtMEJ83AMBaYdo
-```
-
-### Paso 3: Personalizar el workflow
-
-Trabaja sobre una COPIA del workflow base. Nunca modifiques el original.
-
-#### 3a) Nodo "Cliente Config"
-
-Reemplaza el valor de `CLIENTE_API_KEY` en el nodo Set llamado "Cliente Config":
-
+### Nodo Cliente Config (multi-tenant)
+El nodo Set llamado `Cliente Config` contiene los valores por cliente:
 ```json
 {
   "name": "CLIENTE_API_KEY",
-  "value": "<api_key del config_json>"
+  "value": "<api_key del cliente>"
+},
+{
+  "name": "CURSO",
+  "value": "<nombre del curso>"
 }
 ```
 
-#### 3b) Mensajes de bienvenida / oferta inicial
+Estos valores alimentan TODO el flujo dinámicamente:
+- `CURSO` → se usa como `kit` en la tabla `leads` y en los Switch de ruteo
+- `CLIENTE_API_KEY` → `Resolver Cliente` busca en `clientes` por `api_key`
 
-Busca TODOS los nodos HTTP Request que envían el mensaje inicial de oferta.
-En el flujo actual son los nodos que contienen el texto del producto en `jsonBody` o en `bodyParameters`.
+### Tablas de Supabase usadas por el flujo
+| Tabla | Uso |
+|-------|-----|
+| `clientes` | `Resolver Cliente` — GET por `api_key` |
+| `leads` | CRUD de contactos — POST (crear), GET (buscar), PATCH (actualizar) |
+| `conversaciones` | Upsert automático vía RPC `insertar_mensaje` |
+| `mensajes` | Insert vía RPC `insertar_mensaje` (texto, imagen, audio) |
+| `mensajes_fallidos` | `Registrar API Invalida` — POST |
 
-Para CADA uno, reemplaza:
+### RPC `insertar_mensaje`
+La función en Supabase acepta 6 parámetros:
+- `_cliente_id` UUID, `_lead_telefono` TEXT, `_direccion` TEXT ('entrante'/'saliente')
+- `_contenido` TEXT, `_wa_message_id` TEXT, `_tipo` TEXT (DEFAULT 'texto')
 
-| Texto actual | Reemplazar por |
-|-------------|---------------|
-| Nombre del producto hardcodeado | `config_json.curso.nombre` |
-| Descripción del producto hardcodeada | `config_json.curso.descripcion` |
-| Precio de oferta hardcodeado (ej. "S/.10") | `config_json.curso.moneda` + `config_json.curso.precio_oferta` |
-| Precio regular hardcodeado (ej. "S/.50") | `config_json.curso.moneda` + `config_json.curso.precio_regular` |
-| Bonos hardcodeados | `config_json.bonos_extras` (si existen) |
-| Link de Drive hardcodeado | `config_json.link_entrega` |
+Los nodos `Logging Msg Entrante`, `Logging Imagen Entrante (Suerte)` y `Logging Imagen Entrante (Remedios)` llaman esta RPC.
 
-#### 3c) Agentes de IA (AI Agent nodes)
+### v3/v4 — Novedades desde v2
 
-Hay 6 agentes en el flujo base (3 para cada producto). Para el bot de un cliente,
-puedes necesitar solo 3 (un producto = 3 niveles de oferta: principal, 1ra oferta, 2da oferta).
+| Cambio | Versión | Detalle |
+|--------|---------|---------|
+| `retryOnFail` | v3 | 10 nodos de logging + Resolver Cliente + Registrar API Invalida (3 intentos, 2s intervalo) |
+| `Duplicado?` IF | v3 | Insertado entre Logging Msg Entrante y Search a row by keyword. Si `insertar_mensaje` retorna null (duplicado), frena el flujo |
+| Logging saliente (ofertas) | v3 | 5 nodos nuevos después de HTTP Request2/5/6/8/11/12 con `_direccion: "saliente"` y contenido hardcodeado |
+| Logging saliente (IA) | v4 | 6 nodos después de cada WhatsApp nativo de los AI Agents. Contenido dinámico: `={{ $('AGENT_NAME').item.json.output }}` |
+| Logging saliente (pago inválido) | v4 | 2 nodos después de Responder Pago Invalido1/3 |
 
-En el `systemPrompt` o `text` de cada AI Agent, reemplaza:
-
-- **Nombre del agente**: "Samantha" / "DigiPro Closer" / "Asesora Samantha" → `config_json.nombre_agente`
-- **Nombre del producto**: hardcodeado → `config_json.curso.nombre`
-- **Descripción del producto**: hardcodeada → `config_json.curso.descripcion`
-- **Precio oferta**: hardcodeado → `${config_json.curso.moneda} ${config_json.curso.precio_oferta}`
-- **Precio regular**: hardcodeado → `${config_json.curso.moneda} ${config_json.curso.precio_regular}`
-- **Medios de pago**: hardcodeados → generados dinámicamente desde `config_json.medios_pago`
-- **Bonos**: hardcodeados → `config_json.bonos_extras`
-
-**Formato de medios de pago en los prompts:**
-
-Para cada medio de pago en `config_json.medios_pago`, genera una línea como:
-
+### Estructura del flujo (v4 simplificada)
 ```
-${medio.tipo.toUpperCase()}: ${medio.dato}
-Titular: ${medio.titular}
+WhatsApp Trigger
+  → Edit Fields (telefono, texto, tipo)
+  → Cliente Config (CLIENTE_API_KEY, CURSO)
+  → Resolver Cliente (GET /clientes?api_key=...)
+  → API Key Valida?
+    ├── VALID:
+    │   → Es Audio? → Transcribir → ...
+    │   → Logging Msg Entrante (RPC insertar_mensaje)
+    │   → Duplicado? [NUEVO v3] — si es duplicado, TERMINA aquí
+    │   → Search a row by keyword (GET /leads?telefono=...)
+    │   → Switch1 (kit == CURSO) → ofertas HTTP + AI Agents
+    │   → [CADA WhatsApp send ahora tiene Logging Msg Saliente después]
+    │   → Validación de pago (imagen → Groq → ¿válido?)
+    │     ├── SÍ: Update estado=pagado + Entregar link + Logging Msg Saliente
+    │     └── NO: Responder Pago Invalido + Logging Msg Saliente [NUEVO v4]
+    └── INVALID:
+        → Registrar API Invalida
 ```
 
-Si el cliente tiene 2 o 3 medios de pago, lista todos. Adapta el texto del prompt
-para que incluya todos los medios, no solo uno.
+### Inventario completo de nodos de logging saliente (13 total)
 
-**Mensaje de bienvenida personalizado:**
+**Ofertas fijas (HTTP Request) — v3:**
+| Nodo logging | Después de | Contenido |
+|---|---|---|
+| Logging Msg Saliente (Oferta Suerte) | HTTP Request2, HTTP Request8 | Texto fijo (oferta inicial rituales) |
+| Logging Msg Saliente (Entrega Suerte) | HTTP Request5 | Texto fijo (link de entrega rituales) |
+| Logging Msg Saliente (Botones) | HTTP Request6 | Texto fijo (interactive buttons) |
+| Logging Msg Saliente (Entrega Remedios) | HTTP Request | Texto fijo (link de entrega remedios) |
+| Logging Msg Saliente (Oferta Remedios) | HTTP Request11, HTTP Request12 | Texto fijo (oferta inicial remedios) |
 
-Si `config_json.mensaje_bienvenida` NO es null, reemplaza el mensaje de bienvenida
-por defecto en el prompt del agente PRINCIPAL con el texto del cliente.
+**Respuestas de IA (WhatsApp nativo) — v4:**
+| Nodo logging | Después de | Contenido |
+|---|---|---|
+| Logging Msg Saliente (Agente Rituales Principal) | Send message8 | `={{ $('RITUALES PRINCIPAL').item.json.output }}` |
+| Logging Msg Saliente (Agente Rituales 1ra Oferta) | Send message | `={{ $('RITUALES 1RA OFERTA').item.json.output }}` |
+| Logging Msg Saliente (Agente Rituales 2da Oferta) | Send message1 | `={{ $('RITUALES 2da OFERTA1').item.json.output }}` |
+| Logging Msg Saliente (Agente Remedios Principal) | Send message14 | `={{ $('REMEDIOS PRINCIPAL').item.json.output }}` |
+| Logging Msg Saliente (Agente Remedios 1ra Oferta) | Send message15 | `={{ $('REMEDIOS 1RA OFERTA').item.json.output }}` |
+| Logging Msg Saliente (Agente Remedios 2da Oferta) | Send message16 | `={{ $('REMEDIOS 2DA OFERTA').item.json.output }}` |
 
-Si es null, usa un mensaje genérico:
+**Pago inválido — v4:**
+| Nodo logging | Después de | Contenido |
+|---|---|---|
+| Logging Msg Saliente (Pago Invalido 1) | Responder Pago Invalido1 | Texto fijo |
+| Logging Msg Saliente (Pago Invalido 3) | Responder Pago Invalido3 | Texto fijo |
+
+---
+
+## Paso a paso
+
+### Paso 1: Obtener el config_json
+
+Lee el `config_json` de la tabla `solicitudes_bot` en Supabase:
+
+```sql
+SELECT id, cliente_id, nombre_curso, estado, config_json
+FROM public.solicitudes_bot
+WHERE estado = 'pendiente'
+ORDER BY created_at ASC;
 ```
-¡Hola! Soy ${config_json.nombre_agente}, tu asesor virtual de ${config_json.nombre_negocio}.
-¿Te interesa conocer más sobre "${config_json.curso.nombre}"?
+
+O recíbelo directamente del admin como archivo `.json`.
+
+### Estructura del config_json (de solicitudes_bot)
+
+```json
+{
+  "cliente_id": "uuid",
+  "api_key": "bionova_xxx",
+  "nombre_negocio": "BioNova",
+  "nombre_agente": "AGENTE BioNova",
+  "curso": {
+    "nombre": "kit de rituales",
+    "descripcion": "descripción del curso",
+    "precio_oferta": 10,
+    "precio_regular": 50,
+    "moneda": "PEN"
+  },
+  "medios_pago": [
+    { "tipo": "yape", "dato": "987654321", "titular": "Nombre" }
+  ],
+  "link_entrega": "https://...",
+  "bonos_extras": null,
+  "mensaje_bienvenida": null,
+  "fecha_solicitud": "2026-07-08T..."
+}
+```
+
+### Paso 2: Obtener el workflow base
+
+**Opción A — Desde n8n (recomendado, siempre actualizado):**
+```bash
+curl -s -H "X-N8N-API-KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJiOGVhNzQyMC1lMGViLTQ4OGUtYmJmZC02NmY4MzQyM2MxYzYiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiY2ViNTI0ZmYtMGZhYS00YzE2LTkwMGEtZTIxOTMzMWQ1YWM5IiwiaWF0IjoxNzgzMjU1MzIzfQ.IZfvUIONdBictCLzjiAdX7BnWFYLZrtMEJ83AMBaYdo" \
+  "https://bright-kelpie.pikapod.net/api/v1/workflows/3OwwF6vlreDekIZn"
+```
+
+**Opción B — Desde archivo local:**
+Leer `C:\Users\Lazz.p\Desktop\claude-code-n8n\backend-suerte-remedios-v4.json`
+
+### Paso 3: Personalizar el workflow
+
+Trabaja sobre una COPIA. NUNCA modifiques el original.
+
+#### 3a) Nodo "Cliente Config"
+
+Actualiza los dos valores en el nodo Set:
+```json
+{
+  "name": "CLIENTE_API_KEY",
+  "value": "<config_json.api_key>"
+},
+{
+  "name": "CURSO",
+  "value": "<config_json.curso.nombre>"
+}
+```
+
+#### 3b) Mensajes de WhatsApp (HTTP Request a graph.facebook.com)
+
+Hay 7 nodos HTTP Request que envían mensajes de WhatsApp a `graph.facebook.com`:
+`HTTP Request2`, `HTTP Request5`, `HTTP Request6`, `HTTP Request8`, `HTTP Request`, `HTTP Request11`, `HTTP Request12`
+
+En cada uno, reemplaza en el `jsonBody` o `bodyParameters`:
+
+| Dato hardcodeado actual | Reemplazar por |
+|--------------------------|----------------|
+| Nombre del producto | `config_json.curso.nombre` |
+| Descripción del producto | `config_json.curso.descripcion` |
+| Precio "S/.10" o similar | `S/. {config_json.curso.precio_oferta}` |
+| Precio regular "S/.50" | `S/. {config_json.curso.precio_regular}` |
+| Link de Drive/entrega | `config_json.link_entrega` |
+| Datos de medios de pago | Generar desde `config_json.medios_pago` |
+| Bonos extras | `config_json.bonos_extras` (o eliminar si null) |
+
+**IMPORTANTE:** Los 5 nodos de logging de ofertas (v3) que van DESPUÉS de estos HTTP Request tienen el contenido **hardcodeado** en `_contenido`. Debes aplicar los MISMOS reemplazos de arriba a sus `jsonBody._contenido`:
+- `Logging Msg Saliente (Oferta Suerte)` → mismo contenido que HTTP Request2
+- `Logging Msg Saliente (Entrega Suerte)` → mismo contenido que HTTP Request5
+- `Logging Msg Saliente (Botones)` → mismo contenido que HTTP Request6
+- `Logging Msg Saliente (Entrega Remedios)` → mismo contenido que HTTP Request
+- `Logging Msg Saliente (Oferta Remedios)` → mismo contenido que HTTP Request11 |
+
+#### 3c) Agentes de IA (system prompts)
+
+6 nodos `@n8n/n8n-nodes-langchain.agent`:
+`RITUALES PRINCIPAL`, `RITUALES 1RA OFERTA`, `RITUALES 2da OFERTA1`,
+`REMEDIOS PRINCIPAL`, `REMEDIOS 1RA OFERTA`, `REMEDIOS 2DA OFERTA`
+
+En el `systemPrompt` o `text` de cada uno, reemplaza:
+- Nombre del agente → `config_json.nombre_agente`
+- Nombre del producto → `config_json.curso.nombre`
+- Descripción → `config_json.curso.descripcion`
+- Precio → `{moneda} {precio_oferta}` / `{moneda} {precio_regular}`
+- Medios de pago → generar desde `config_json.medios_pago`
+- Bonos → `config_json.bonos_extras`
+
+**Formato de medios de pago:**
+```
+YAPE: {dato} - {titular}
+PLIN: {dato} - {titular}
+TRANSFERENCIA: {dato} - {titular}
 ```
 
 #### 3d) Mensajes de entrega post-pago
 
-Busca los nodos que envían el link de entrega después de confirmar el pago.
-Reemplaza el link hardcodeado por `config_json.link_entrega`.
+Nodos `HTTP Request5` y `HTTP Request` — reemplazar link de entrega por `config_json.link_entrega`.
 
-Si `link_entrega` es null, deja el mensaje genérico sin link (solo confirmación de pago).
+#### 3e) Simplificar para UN solo curso
 
-#### 3e) Adaptar el flujo para UN solo producto
+El workflow base maneja DOS paths (Switch1 bifurca por `kit`). Para un cliente con UN solo curso:
 
-El workflow base maneja DOS productos (Suerte/Rituales y Remedios) con un Switch
-que bifurca según el kit seleccionado. Para un cliente con UN solo producto:
+**Opción recomendada:** Mantén la estructura completa pero con AMBOS paths apuntando al mismo `CURSO`. Así el Switch1 siempre toma el primer match y el flujo funciona sin necesidad de eliminar nodos. Menos riesgo de romper conexiones.
 
-1. Elimina la bifurcación de "kit selection" (el Switch que pregunta "suerte o remedios")
-2. Deja solo UNA rama de producto con sus 3 niveles de oferta
-3. Elimina los nodos de la otra rama
+Si el admin pide explícitamente flujo simplificado, elimina la segunda rama.
 
-O alternativamente, mantén la estructura pero reemplaza AMBOS productos con el mismo
-curso del cliente (más simple, menos errores).
+#### 3f) Logging de respuestas de IA (v4) — NO TOCAR contenido
 
-La decisión depende de la complejidad del flujo base que estés usando.
+Los 6 nodos `Logging Msg Saliente (Agente ...)` capturan la respuesta del AI Agent **dinámicamente** mediante `={{ $('NOMBRE_AGENTE').item.json.output }}`. El contenido NO necesita personalización porque se resuelve en runtime.
 
-#### 3f) WhatsApp API credentials
+Lo ÚNICO que debes verificar es que el nombre del AI Agent en la expresión coincida con el nombre real del nodo (por si renombraste agentes en el paso 3c).
 
-Los nodos HTTP Request que llaman a `graph.facebook.com` usan un token de WhatsApp
-Business API. Este token y el Phone Number ID son del SISTEMA (BioNova), NO del cliente.
-**No los reemplaces.** Déjalos como están.
+#### 3g) Logging de Pago Invalido (v4) — actualizar si cambia
 
-Lo mismo aplica para:
-- API keys de Groq (análisis de imágenes de pago)
-- API key de ImgBB (subida de imágenes)
-- Credenciales de Supabase
+Los 2 nodos `Logging Msg Saliente (Pago Invalido 1/3)` tienen el texto hardcodeado en `_contenido`. Si cambiaste el mensaje en `Responder Pago Invalido1/3`, replica el mismo cambio aquí.
+
+#### 3h) Credenciales del sistema — NO TOCAR
+
+Estos valores son de BioNova, NO del cliente. Déjalos intactos:
+- Token de WhatsApp (`EAALrZBb...`) en headers `Authorization: Bearer`
+- API Key de Groq (`gsk_...`) en `Gemini Analisis1/3`
+- URL de Supabase (`cflbaocrsjmpmalgluch.supabase.co`)
+- Credencial de Supabase en n8n (`supabaseApi`)
+- API Key de ImgBB
 
 ### Paso 4: Renombrar el workflow
 
-Cambia el nombre del workflow a:
-```
-BOT - {config_json.nombre_negocio} - {config_json.curso.nombre}
+```json
+"name": "BOT - {config_json.nombre_negocio} - {config_json.curso.nombre}"
 ```
 
 ### Paso 5: Guardar el archivo
 
-Crea la carpeta `~/Desktop/bots-clientes/` si no existe.
+Crear carpeta `C:\Users\Lazz.p\Desktop\bots-clientes\` si no existe.
 
-Guarda el JSON resultante con nombre:
+Nombre de archivo:
 ```
-{slugify(nombre_negocio)}-{slugify(nombre_curso)}-{fecha}.json
-```
-
-Función `slugify`:
-```javascript
-function slugify(text) {
-  return text
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+{slug(nombre_negocio)}-{slug(curso.nombre)}-{fecha}.json
 ```
 
-Ejemplo: `bionova-megakit-de-rituales-2026-07-08.json`
+Función slug: lowercase, sin acentos, solo `[a-z0-9-]`.
 
-### Paso 6: Resumen final
+Ejemplo: `bionova-kit-de-rituales-2026-07-08.json`
 
-Al terminar, muestra un resumen claro:
+### Paso 6: Actualizar solicitudes_bot
+
+Después de generar el workflow, marcar la solicitud como procesada:
+```sql
+UPDATE public.solicitudes_bot
+SET estado = 'entregado', procesado_at = now()
+WHERE id = '<solicitud_id>';
+```
+
+---
+
+## Resumen final (formato de salida)
 
 ```
 Bot generado exitosamente
@@ -221,70 +300,35 @@ Bot generado exitosamente
 Cliente: {nombre_negocio}
 Curso: {curso.nombre}
 Precio: {moneda} {precio_oferta} (regular: {precio_regular})
-Medios de pago: {cantidad} configurados
+Medios de pago: {N} configurados
 Link de entrega: {link_entrega o "No especificado"}
-Bonos: {cantidad de bonos o "Ninguno"}
-Mensaje personalizado: {Sí/No}
+Bonos: {N bonos o "Ninguno"}
 
-Campos personalizados en el workflow:
-- Cliente Config: API Key reemplazada
-- {N} mensajes de oferta: nombres, precios, bonos actualizados
-- {N} agentes IA: prompts actualizados con datos del curso
+Cambios aplicados:
+- Cliente Config: CLIENTE_API_KEY + CURSO actualizados
+- {N} mensajes de WhatsApp: precios, nombres, links actualizados
+- {N} agentes IA: prompts actualizados
 - {N} mensajes de entrega: link reemplazado
-- {N} medios de pago integrados en todos los mensajes
+- {N} medios de pago integrados
 
-Archivo: ~/Desktop/bots-clientes/{nombre-archivo}.json
+Archivo: C:\Users\Lazz.p\Desktop\bots-clientes\{nombre-archivo}.json
 
 Revisa el archivo antes de importarlo a n8n.
 ```
 
-## Validaciones
+---
 
-Antes de dar el workflow por terminado, verifica:
+## Validaciones finales
 
-1. No quedan placeholders sin reemplazar (busca "Samantha", "S/.10", "S/.50",
-   "910 801 141", links de Drive viejos en TODO el JSON).
-2. El api_key en Cliente Config es EXACTAMENTE el del config_json (sin espacios extra).
-3. El nombre del workflow empieza con "BOT - ".
-4. El JSON es válido (sin comas extra, sin campos undefined).
-5. Todos los `{{ }}` expressions de n8n siguen intactos (no rompiste ninguna sintaxis).
-6. La cantidad de medios de pago en los mensajes coincide con `config_json.medios_pago.length`.
-
-## Manejo de variaciones
-
-### Cantidad variable de medios de pago
-
-Si el config_json tiene 1 medio de pago → el mensaje solo menciona ese.
-Si tiene 2 → menciona ambos (Yape + Plin, por ejemplo).
-Si tiene 3+ → lista todos.
-
-Genera el texto de medios de pago dinámicamente, no uses un template fijo.
-
-### Bonos opcionales
-
-Si `bonos_extras` es null o array vacío → elimina las líneas de "BONUS GRATIS" de
-los mensajes de oferta y de los prompts de los agentes.
-
-Si tiene bonos → insértalos como lista en el mismo formato que el flujo original.
-
-### Mensaje de bienvenida opcional
-
-Si es null → usa el mensaje genérico del Paso 3c.
-Si tiene valor → úsalo textualmente, sin modificarlo.
-
-## Workflow base de referencia
-
-- **Nombre en n8n**: "FLUJO SUERTE Y REMEDIOS"
-- **ID**: `3OwwF6vlreDekIZn`
-- **Instancia**: `https://bright-kelpie.pikapod.net`
-- **Nodos**: ~96 (varía según la versión)
-- **Productos**: Suerte (Rituales) + Remedios
-- **Estructura**: WhatsApp Trigger → API Key validation → Audio/Image routing → Kit selection → 3 niveles de oferta por producto → Payment validation → Delivery
-
-## Notas importantes
-
-- Este skill genera un archivo JSON para que el admin lo REVISE antes de importar/desplegar.
-- No despliega automáticamente el workflow en n8n — solo lo genera.
-- El admin debe verificar visualmente el resultado antes de subirlo.
-- Si algo no cuadra (ej. el workflow base cambió su estructura), avisa al admin en vez de
-  generar un workflow potencialmente roto.
+1. No quedan placeholders viejos ("Samantha", "S/.10", "S/.50", "910 801 141", links de Drive antiguos)
+2. `CLIENTE_API_KEY` y `CURSO` en Cliente Config son exactamente los del config_json
+3. El nombre del workflow empieza con "BOT - "
+4. El JSON es válido y todos los `{{ }}` de n8n están intactos
+5. La cantidad de medios de pago en los mensajes coincide con `config_json.medios_pago.length`
+6. Si `bonos_extras` es null/empty, NO hay líneas de "BONUS" en ningún lado
+7. Los nodos de Logging tienen `_tipo` correcto ("texto" dinámico, "imagen" fijo)
+8. Los 5 nodos de logging de ofertas (v3) reflejan los mismos cambios de contenido que sus HTTP Request padre
+9. Los 6 nodos de logging de IA (v4) referencian al nombre correcto del AI Agent: `={{ $('NOMBRE_EXACTO').item.json.output }}`
+10. Si renombraste agentes en 3c, actualizaste las referencias en los logging de IA (3f)
+11. El `_direccion` en TODO nodo de logging saliente es `"saliente"` (NO "entrante")
+12. `retryOnFail` sigue activo en todos los nodos de logging (no se desactivó durante la edición)

@@ -12,6 +12,35 @@ function formatMsgTime(iso: string): string {
   return d.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
 }
 
+/** Convierte formato de WhatsApp (*bold*, _italic_, ~strikethrough~, `code`) a HTML */
+function parseWhatsApp(content: string): string {
+  const escaped = content
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  let html = escaped;
+
+  // Monospace (triple backtick)
+  html = html.replace(
+    /```([^`]+)```/g,
+    '<code class="bg-black/10 rounded px-1 py-0.5 text-[0.8em] font-mono">$1</code>',
+  );
+  // Monospace (single backtick)
+  html = html.replace(
+    /`([^`]+)`/g,
+    '<code class="bg-black/10 rounded px-1 py-0.5 text-[0.8em] font-mono">$1</code>',
+  );
+  // Bold
+  html = html.replace(/\*([^*]+)\*/g, "<strong>$1</strong>");
+  // Italic (underscore)
+  html = html.replace(/_([^_]+)_/g, "<em>$1</em>");
+  // Strikethrough
+  html = html.replace(/~([^~]+)~/g, "<del>$1</del>");
+
+  return html;
+}
+
 function formatMsgDate(iso: string): string {
   const d = new Date(iso);
   const today = new Date();
@@ -169,7 +198,7 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
         <div className="absolute inset-0 bg-black/20" onClick={onClose} />
 
         {/* Panel */}
-        <div className="relative w-full sm:w-[420px] h-full bg-white shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]">
+        <div className="relative w-full sm:w-[540px] h-full bg-white shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]">
           {/* Header */}
           <div className="shrink-0 flex items-center gap-3 px-4 h-14 border-b border-slate-200 bg-white">
             <button
@@ -258,7 +287,12 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
 
                         {/* Text content */}
                         {m.contenido && (
-                          <p className="text-sm whitespace-pre-wrap break-words">{m.contenido}</p>
+                          <p
+                            className="text-sm whitespace-pre-wrap break-words"
+                            dangerouslySetInnerHTML={{
+                              __html: parseWhatsApp(m.contenido),
+                            }}
+                          />
                         )}
 
                         {/* Image */}

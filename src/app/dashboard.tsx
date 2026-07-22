@@ -36,7 +36,7 @@ export function Dashboard({
   solicitudActiva: SolicitudActiva | null;
   pendingBotsCount: number;
 }) {
-  const scopeId = user.isAdmin ? null : (user.cliente?.id ?? undefined);
+  const scopeId = user.cliente?.id ?? undefined;
   const { leads, isLive } = useRealtime(initialLeads, scopeId);
   const [periodo, setPeriodo] = useState<Periodo>("hoy");
   const [fecha, setFecha] = useState(getLimaDateString());

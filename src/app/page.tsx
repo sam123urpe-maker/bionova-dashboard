@@ -42,9 +42,9 @@ export default async function HomePage() {
   const clienteId = auth?.cliente?.id ?? null;
   const isAdmin = auth?.cliente?.rol === "admin";
 
-  // Fetch solicitud activa for non-admin clients
+  // Fetch solicitud activa (admin also sees their own)
   let solicitudActiva: SolicitudActiva | null = null;
-  if (!isAdmin && clienteId) {
+  if (clienteId) {
     solicitudActiva = await getSolicitudActiva(clienteId);
   }
 
@@ -67,8 +67,8 @@ export default async function HomePage() {
     );
   }
 
-  // Admin sees all (clienteId = null), others see only their leads
-  const leads = await fetchLeads(isAdmin ? null : clienteId);
+  // Everyone sees only their own leads (including admin)
+  const leads = await fetchLeads(clienteId);
 
   return (
     <Dashboard

@@ -48,9 +48,7 @@ export async function getScopeClienteId(): Promise<string | null> {
   const auth = await getAuthUser();
   if (!auth) return null;
 
-  // Admin sees all
-  if (auth.cliente?.rol === "admin") return null;
-
+  // Everyone is scoped to their own cliente_id (including admin)
   return auth.cliente?.id ?? null;
 }
 

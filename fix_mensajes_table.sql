@@ -75,8 +75,9 @@ CREATE TRIGGER trg_mensajes_secuencia
   FOR EACH ROW
   EXECUTE FUNCTION set_mensaje_secuencia();
 
--- 8. Mensajes fallidos (si no existe)
-CREATE TABLE IF NOT EXISTS mensajes_fallidos (
+-- 8. Mensajes fallidos
+DROP TABLE IF EXISTS mensajes_fallidos CASCADE;
+CREATE TABLE mensajes_fallidos (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   cliente_id UUID REFERENCES clientes(id) ON DELETE SET NULL,
   payload_original JSONB NOT NULL,
@@ -86,8 +87,8 @@ CREATE TABLE IF NOT EXISTS mensajes_fallidos (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX IF NOT EXISTS idx_fallidos_resuelto ON mensajes_fallidos(resuelto, created_at);
-CREATE INDEX IF NOT EXISTS idx_fallidos_cliente ON mensajes_fallidos(cliente_id);
+CREATE INDEX idx_fallidos_resuelto ON mensajes_fallidos(resuelto, created_at);
+CREATE INDEX idx_fallidos_cliente ON mensajes_fallidos(cliente_id);
 
 -- 9. Realtime
 ALTER PUBLICATION supabase_realtime ADD TABLE mensajes;
