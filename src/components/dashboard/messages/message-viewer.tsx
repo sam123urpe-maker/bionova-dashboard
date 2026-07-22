@@ -24,12 +24,12 @@ function parseWhatsApp(content: string): string {
   // Monospace (triple backtick)
   html = html.replace(
     /```([^`]+)```/g,
-    '<code class="bg-black/10 rounded px-1 py-0.5 text-[0.8em] font-mono">$1</code>',
+    '<code class="msg-code">$1</code>',
   );
   // Monospace (single backtick)
   html = html.replace(
     /`([^`]+)`/g,
-    '<code class="bg-black/10 rounded px-1 py-0.5 text-[0.8em] font-mono">$1</code>',
+    '<code class="msg-code">$1</code>',
   );
   // Bold
   html = html.replace(/\*([^*]+)\*/g, "<strong>$1</strong>");
@@ -198,18 +198,18 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
         <div className="absolute inset-0 bg-black/20" onClick={onClose} />
 
         {/* Panel */}
-        <div className="relative w-full sm:w-[540px] h-full bg-white shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]">
+        <div className="relative w-full sm:w-[540px] h-full bg-white dark:bg-slate-900 shadow-2xl flex flex-col animate-[slideIn_0.2s_ease-out]">
           {/* Header */}
-          <div className="shrink-0 flex items-center gap-3 px-4 h-14 border-b border-slate-200 bg-white">
+          <div className="shrink-0 flex items-center gap-3 px-4 h-14 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 dark:text-slate-400 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
             <div>
-              <p className="text-sm font-semibold text-slate-800">{telefono}</p>
-              <p className="text-xs text-slate-400">
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">{telefono}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500">
                 {mensajes.length} mensaje{mensajes.length !== 1 ? "s" : ""}
               </p>
             </div>
@@ -219,11 +219,11 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
           <div
             ref={scrollRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto bg-slate-50"
+            className="flex-1 overflow-y-auto bg-slate-50 dark:bg-slate-950"
           >
             {loading && (
               <div className="flex items-center justify-center h-full">
-                <div className="flex flex-col items-center gap-3 text-slate-400">
+                <div className="flex flex-col items-center gap-3 text-slate-400 dark:text-slate-500">
                   <Loader2 className="w-8 h-8 animate-spin" />
                   <span className="text-sm">Cargando mensajes...</span>
                 </div>
@@ -234,10 +234,10 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
               <div className="flex items-center justify-center h-full p-6">
                 <div className="flex flex-col items-center gap-3 text-center">
                   <AlertCircle className="w-10 h-10 text-red-400" />
-                  <p className="text-sm text-slate-600">Error al cargar mensajes</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Error al cargar mensajes</p>
                   <button
                     onClick={fetchMensajes}
-                    className="text-sm font-medium text-amber-600 hover:text-amber-700 transition-colors"
+                    className="text-sm font-medium text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
                   >
                     Reintentar
                   </button>
@@ -248,9 +248,9 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
             {!loading && !error && mensajes.length === 0 && (
               <div className="flex items-center justify-center h-full p-6">
                 <div className="flex flex-col items-center gap-3 text-center">
-                  <MessageCircle className="w-10 h-10 text-slate-300" />
-                  <p className="text-sm text-slate-500">No hay mensajes para este contacto</p>
-                  <p className="text-xs text-slate-400">
+                  <MessageCircle className="w-10 h-10 text-slate-300 dark:text-slate-600" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400">No hay mensajes para este contacto</p>
+                  <p className="text-xs text-slate-400 dark:text-slate-500">
                     Los mensajes apareceran aqui cuando el bot interactue con este numero.
                   </p>
                 </div>
@@ -261,7 +261,7 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
               <div key={group.date}>
                 {/* Date divider */}
                 <div className="flex justify-center py-3">
-                  <span className="text-xs font-medium text-slate-400 bg-slate-100 px-3 py-1 rounded-full">
+                  <span className="text-xs font-medium text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full">
                     {group.date}
                   </span>
                 </div>
@@ -277,7 +277,7 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
                         className={`max-w-[85%] ${
                           outgoing
                             ? "bg-amber-500 text-white rounded-2xl rounded-br-md"
-                            : "bg-white border border-slate-200 text-slate-800 rounded-2xl rounded-bl-md"
+                            : "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 rounded-2xl rounded-bl-md"
                         } px-3.5 py-2 shadow-sm`}
                       >
                         {/* Remitente label for agent messages */}
@@ -345,7 +345,7 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
                         {/* Timestamp */}
                         <p
                           className={`text-xs mt-1 ${
-                            outgoing ? "text-white/70" : "text-slate-400"
+                            outgoing ? "text-white/70" : "text-slate-400 dark:text-slate-500"
                           } text-right`}
                         >
                           {formatMsgTime(m.timestamp)}
@@ -385,6 +385,16 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
         @keyframes slideUp {
           from { transform: translate(-50%, 10px); opacity: 0; }
           to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .msg-code {
+          background: rgba(0, 0, 0, 0.08);
+          border-radius: 4px;
+          padding: 2px 4px;
+          font-size: 0.85em;
+          font-family: monospace;
+        }
+        :global(.dark) .msg-code {
+          background: rgba(255, 255, 255, 0.1);
         }
       `}</style>
     </>

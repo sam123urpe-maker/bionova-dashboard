@@ -81,7 +81,7 @@ export function BotBuilding({ nombreCurso, onDone }: BotBuildingProps) {
   const completado = progresso >= 100;
 
   return (
-    <div className={`min-h-screen bg-slate-50 flex items-center justify-center px-4 ${sectionClass}`}>
+    <div className={`min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 ${sectionClass}`}>
       <div className="w-full max-w-sm text-center">
         {/* Lottie Animation */}
         <div className="mb-4 flex justify-center">
@@ -94,8 +94,8 @@ export function BotBuilding({ nombreCurso, onDone }: BotBuildingProps) {
               />
             ) : (
               <div className="w-48 h-48 flex items-center justify-center">
-                <div className="w-24 h-24 rounded-full bg-emerald-100 flex items-center justify-center animate-[pop_0.4s_ease-out]">
-                  <Check className="w-12 h-12 text-emerald-600" />
+                <div className="w-24 h-24 rounded-full bg-emerald-100 dark:bg-emerald-950 flex items-center justify-center animate-[pop_0.4s_ease-out]">
+                  <Check className="w-12 h-12 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
             )}
@@ -103,12 +103,12 @@ export function BotBuilding({ nombreCurso, onDone }: BotBuildingProps) {
         </div>
 
         {/* Course name */}
-        <h2 className="text-lg font-semibold text-slate-800 mb-6">
+        <h2 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-6">
           {completado ? "Tu agente está listo" : `Creando "${nombreCurso}"`}
         </h2>
 
         {/* Progress bar */}
-        <div className="w-full h-2 bg-slate-200 rounded-full mb-4 overflow-hidden">
+        <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full mb-4 overflow-hidden">
           <div
             className="h-full rounded-full transition-colors duration-500"
             style={{
@@ -119,14 +119,14 @@ export function BotBuilding({ nombreCurso, onDone }: BotBuildingProps) {
         </div>
 
         {/* Progress percentage */}
-        <p className="text-xs text-slate-400 mb-6">{Math.round(progresso)}%</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mb-6">{Math.round(progresso)}%</p>
 
         {/* Phrase */}
         <div className="relative h-12 flex items-center justify-center mb-4">
           {FRASES.map((frase, i) => (
             <p
               key={i}
-              className={`absolute text-sm text-slate-600 transition-all duration-500 ${
+              className={`absolute text-sm text-slate-600 dark:text-slate-400 transition-all duration-500 ${
                 i === fraseActual && !completado
                   ? "opacity-100 translate-y-0"
                   : "opacity-0 translate-y-2"
@@ -198,7 +198,7 @@ export function BotBuildingBanner({
   });
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6">
+    <div className="bg-gradient-to-br from-amber-50 dark:from-amber-950 to-orange-50 dark:to-orange-950 border border-amber-200 dark:border-amber-800 rounded-2xl p-6">
       <div className="flex items-start gap-5">
         {/* Chatbot Lottie Animation */}
         <div className="shrink-0 w-24 h-24 -mt-2 -ml-2">
@@ -210,17 +210,17 @@ export function BotBuildingBanner({
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="text-base font-semibold text-amber-800">
+          <h3 className="text-base font-semibold text-amber-800 dark:text-amber-300">
             Tu bot se está construyendo
           </h3>
-          <p className="text-sm text-amber-700 mt-1">
+          <p className="text-sm text-amber-700 dark:text-amber-400 mt-1">
             <strong>{nombreCurso}</strong> — solicitado el {fechaStr}
           </p>
 
           {/* Cycling phrase */}
           <div className="relative h-6 mt-2 overflow-hidden">
             <p
-              className={`absolute inset-0 text-sm text-amber-600 transition-all duration-500 ${
+              className={`absolute inset-0 text-sm text-amber-600 dark:text-amber-400 transition-all duration-500 ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
               }`}
             >
@@ -229,7 +229,7 @@ export function BotBuildingBanner({
           </div>
 
           <div className="mt-3 flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 text-xs font-medium text-amber-700">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900 text-xs font-medium text-amber-700 dark:text-amber-300">
               <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
               {estado === "pendiente" ? "En revisión" : "En construcción"}
             </span>
@@ -269,7 +269,7 @@ export function AdminBotsBanner({ count }: { count: number }) {
   }, []);
 
   return (
-    <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-5">
+    <div className="bg-gradient-to-br from-amber-50 dark:from-amber-950 to-orange-50 dark:to-orange-950 border border-amber-200 dark:border-amber-800 rounded-2xl p-5">
       <div className="flex items-center gap-5">
         {/* Chatbot Lottie Animation */}
         <div className="shrink-0 w-20 h-20 -mt-1 -ml-1">
@@ -282,10 +282,10 @@ export function AdminBotsBanner({ count }: { count: number }) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="text-base font-semibold text-amber-800">
+            <h3 className="text-base font-semibold text-amber-800 dark:text-amber-300">
               {count} bot{count !== 1 ? "s" : ""} en construcción
             </h3>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 text-xs font-medium text-amber-700">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900 text-xs font-medium text-amber-700 dark:text-amber-300">
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
               Pendiente
             </span>
@@ -294,7 +294,7 @@ export function AdminBotsBanner({ count }: { count: number }) {
           {/* Cycling phrase */}
           <div className="relative h-5 mt-1.5 overflow-hidden">
             <p
-              className={`absolute inset-0 text-sm text-amber-600 transition-all duration-500 ${
+              className={`absolute inset-0 text-sm text-amber-600 dark:text-amber-400 transition-all duration-500 ${
                 visible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
               }`}
             >
@@ -304,7 +304,7 @@ export function AdminBotsBanner({ count }: { count: number }) {
 
           <Link
             href="/admin/bots"
-            className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-amber-700 hover:text-amber-900 transition-colors"
+            className="inline-flex items-center gap-1.5 mt-3 text-xs font-medium text-amber-700 dark:text-amber-400 hover:text-amber-900 dark:hover:text-amber-200 transition-colors"
           >
             <Package className="w-3.5 h-3.5" />
             Ir al panel de bots

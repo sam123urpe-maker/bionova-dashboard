@@ -148,9 +148,9 @@ export function BotsClient({
   }, [displayed, clienteMap]);
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       {/* Header */}
-      <header className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b border-slate-200">
+      <header className="sticky top-0 z-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Image
@@ -161,14 +161,14 @@ export function BotsClient({
               className="h-10 w-auto"
               priority
             />
-            <span className="text-sm text-slate-400">|</span>
-            <span className="text-sm font-medium text-slate-700">
+            <span className="text-sm text-slate-400 dark:text-slate-500">|</span>
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-200">
               Panel Admin — Bots
             </span>
           </div>
           <Link
             href="/"
-            className="text-xs text-slate-500 hover:text-slate-700 transition-colors flex items-center gap-1"
+            className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors flex items-center gap-1"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Dashboard
@@ -180,11 +180,11 @@ export function BotsClient({
         {/* Stats bar */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <h1 className="text-lg font-semibold text-slate-800 flex items-center gap-2">
+            <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
               <Package className="w-5 h-5 text-amber-600" />
               Bots de esta semana
             </h1>
-            <span className="text-sm text-slate-500">
+            <span className="text-sm text-slate-500 dark:text-slate-400">
               {displayed.length} solicitud{displayed.length !== 1 ? "es" : ""}
             </span>
           </div>
@@ -194,8 +194,8 @@ export function BotsClient({
               onClick={() => setShowAll(!showAll)}
               className={`text-xs px-3 py-1.5 rounded-lg border transition-colors ${
                 showAll
-                  ? "bg-slate-100 border-slate-300 text-slate-700"
-                  : "border-slate-200 text-slate-500 hover:border-slate-300"
+                  ? "bg-slate-100 dark:bg-slate-700 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200"
+                  : "border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-600"
               }`}
             >
               {showAll ? "Mostrando todas" : "Últimos 7 días"}
@@ -221,37 +221,37 @@ export function BotsClient({
         {/* Table or empty state */}
         {displayed.length === 0 ? (
           <div className="text-center py-20">
-            <Package className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-            <p className="text-slate-500 text-sm">No hay solicitudes pendientes.</p>
-            <p className="text-slate-400 text-xs mt-1">
+            <Package className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+            <p className="text-slate-500 dark:text-slate-400 text-sm">No hay solicitudes pendientes.</p>
+            <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">
               Las nuevas solicitudes de bots aparecerán aquí.
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
-                    <th className="text-left px-4 py-3 font-medium text-slate-500">
+                  <tr className="border-b border-slate-100 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+                    <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Negocio
                     </th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-500">
+                    <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Curso
                     </th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-500">
+                    <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Precio
                     </th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-500">
+                    <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Fecha
                     </th>
-                    <th className="text-left px-4 py-3 font-medium text-slate-500">
+                    <th className="text-left px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Estado
                     </th>
-                    <th className="text-center px-4 py-3 font-medium text-slate-500">
+                    <th className="text-center px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Infra
                     </th>
-                    <th className="text-right px-4 py-3 font-medium text-slate-500">
+                    <th className="text-right px-4 py-3 font-medium text-slate-500 dark:text-slate-400">
                       Acciones
                     </th>
                   </tr>
@@ -263,12 +263,12 @@ export function BotsClient({
                     return (
                       <tr
                         key={s.id}
-                        className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors"
+                        className="border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors"
                       >
-                        <td className="px-4 py-3 font-medium text-slate-800">
+                        <td className="px-4 py-3 font-medium text-slate-800 dark:text-slate-200">
                           {negocio}
                         </td>
-                        <td className="px-4 py-3 text-slate-600 max-w-[200px] truncate">
+                        <td className="px-4 py-3 text-slate-600 dark:text-slate-400 max-w-[200px] truncate">
                           {s.nombre_curso}
                         </td>
                         <td className="px-4 py-3 text-slate-700 font-mono text-xs">
@@ -331,7 +331,7 @@ export function BotsClient({
                                   `${slugify(negocio)}-${slugify(s.nombre_curso)}.json`,
                                 )
                               }
-                              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                               title="Descargar JSON"
                             >
                               <FileJson className="w-4 h-4" />

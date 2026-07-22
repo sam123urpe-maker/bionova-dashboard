@@ -3,10 +3,10 @@
 import type { Lead } from "@/types/client";
 
 const ESTADO_COLORS: Record<Lead["estado"], string> = {
-  pagado: "bg-emerald-100 text-emerald-700",
-  esperando: "bg-amber-100 text-amber-700",
-  abandonado: "bg-red-100 text-red-700",
-  falta: "bg-slate-100 text-slate-600",
+  pagado: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
+  esperando: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400",
+  abandonado: "bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400",
+  falta: "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400",
 };
 
 const ESTADO_LABELS: Record<Lead["estado"], string> = {
@@ -27,9 +27,9 @@ export function StatusBadge({ estado }: { estado: Lead["estado"] }) {
 }
 
 const OFERTA_COLORS: Record<Lead["recibio_oferta"], string> = {
-  recibio: "bg-emerald-100 text-emerald-700",
-  no_recibio: "bg-slate-100 text-slate-600",
-  recibiodos: "bg-amber-100 text-amber-700",
+  recibio: "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400",
+  no_recibio: "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400",
+  recibiodos: "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400",
 };
 
 const OFERTA_LABELS: Record<Lead["recibio_oferta"], string> = {

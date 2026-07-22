@@ -334,7 +334,7 @@ export default function CrearAgentePage() {
     form.medios_pago.some((m) => m.dato.trim() && m.titular.trim());
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center px-4 py-8">
       <div className="w-full max-w-lg">
         {/* Header */}
         <div className="text-center mb-8">
@@ -346,11 +346,11 @@ export default function CrearAgentePage() {
             className="h-12 w-auto mx-auto mb-4"
             priority
           />
-          <h1 className="text-xl font-semibold text-slate-800 flex items-center justify-center gap-2">
+          <h1 className="text-xl font-semibold text-slate-800 dark:text-slate-200 flex items-center justify-center gap-2">
             <Sparkles className="w-5 h-5 text-amber-500" />
             Crear Agente
           </h1>
-          <p className="text-sm text-slate-500 mt-2">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-2">
             Configura tu vendedor virtual 24/7. Nosotros lo armamos por ti.
           </p>
         </div>
@@ -358,17 +358,17 @@ export default function CrearAgentePage() {
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
           {/* ────────── SECCIÓN: API Key BioNova ────────── */}
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <label className="block text-sm font-medium text-amber-800 mb-1.5">
+          <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+            <label className="block text-sm font-medium text-amber-800 dark:text-amber-300 mb-1.5">
               <Key className="w-4 h-4 inline mr-1.5" />
               Tu API Key de BioNova
             </label>
-            <p className="text-xs text-amber-600 mb-2">
+            <p className="text-xs text-amber-600 dark:text-amber-400 mb-2">
               Esta es tu llave de acceso única. La necesitarás para conectar tu bot.
             </p>
             {bionovaApiKey ? (
               <div className="flex items-center gap-2">
-                <code className="flex-1 bg-white border border-amber-200 rounded-lg px-3 py-2 text-xs text-slate-700 font-mono break-all select-all">
+                <code className="flex-1 bg-white dark:bg-slate-800 border border-amber-200 dark:border-amber-700 rounded-lg px-3 py-2 text-xs text-slate-700 dark:text-slate-300 font-mono break-all select-all">
                   {bionovaApiKey}
                 </code>
                 <button
@@ -390,14 +390,14 @@ export default function CrearAgentePage() {
           </div>
 
           {/* ────────── SECCIÓN: Curso ────────── */}
-          <div className="border border-slate-200 rounded-xl p-4 space-y-4">
-            <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-4">
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
               <BookOpen className="w-4 h-4 text-amber-500" />
               Tu curso
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Nombre del curso <span className="text-red-400">*</span>
               </label>
               <input
@@ -406,12 +406,12 @@ export default function CrearAgentePage() {
                 value={form.nombre_curso}
                 onChange={(e) => setField("nombre_curso", e.target.value)}
                 placeholder='ej. "Megakit de Rituales +200"'
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Descripción breve <span className="text-red-400">*</span>
               </label>
               <textarea
@@ -420,7 +420,7 @@ export default function CrearAgentePage() {
                 value={form.descripcion_curso}
                 onChange={(e) => setField("descripcion_curso", e.target.value)}
                 placeholder="Describe qué incluye tu curso..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors resize-none"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors resize-none"
               />
             </div>
 
@@ -428,7 +428,7 @@ export default function CrearAgentePage() {
             <div className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                     Moneda
                   </label>
                   <select
@@ -444,7 +444,7 @@ export default function CrearAgentePage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                     Precio oferta <span className="text-red-400">*</span>
                   </label>
                   <div className="relative">
@@ -457,7 +457,7 @@ export default function CrearAgentePage() {
                       value={form.precio_oferta}
                       onChange={(e) => setField("precio_oferta", e.target.value)}
                       placeholder="10"
-                      className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                      className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
                     />
                   </div>
                   <p className="text-xs text-slate-400 mt-1">
@@ -467,7 +467,7 @@ export default function CrearAgentePage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                     Precio real <span className="text-red-400">*</span>
                   </label>
                   <div className="relative">
@@ -480,7 +480,7 @@ export default function CrearAgentePage() {
                       value={form.precio_regular}
                       onChange={(e) => setField("precio_regular", e.target.value)}
                       placeholder="50"
-                      className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                      className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
                     />
                   </div>
                   <p className="text-xs text-slate-400 mt-1">
@@ -488,7 +488,7 @@ export default function CrearAgentePage() {
                   </p>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                     Precio 2da oferta
                   </label>
                   <div className="relative">
@@ -500,7 +500,7 @@ export default function CrearAgentePage() {
                       value={form.precio_2da_oferta}
                       onChange={(e) => setField("precio_2da_oferta", e.target.value)}
                       placeholder="8"
-                      className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                      className="w-full pl-10 pr-3 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
                     />
                   </div>
                   <p className="text-xs text-slate-400 mt-1">
@@ -512,7 +512,7 @@ export default function CrearAgentePage() {
 
             {/* Medios de pago */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 Medios de pago <span className="text-red-400">*</span>
               </label>
               <div className="space-y-2">
@@ -570,7 +570,7 @@ export default function CrearAgentePage() {
 
             {/* Link de entrega */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Link2 className="w-4 h-4 inline mr-1.5 text-amber-500" />
                 Link de entrega <span className="text-red-400">*</span>
               </label>
@@ -580,13 +580,13 @@ export default function CrearAgentePage() {
                 value={form.link_entrega}
                 onChange={(e) => setField("link_entrega", e.target.value)}
                 placeholder="https://drive.google.com/drive/folders/..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
             </div>
 
             {/* Bonos */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Gift className="w-4 h-4 inline mr-1.5 text-amber-500" />
                 Bonos extra{" "}
                 <span className="text-slate-400 font-normal">(opcional)</span>
@@ -599,7 +599,7 @@ export default function CrearAgentePage() {
                       value={bono}
                       onChange={(e) => updateBono(i, e.target.value)}
                       placeholder='ej. "+20 Rituales de Amor"'
-                      className="flex-1 px-4 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                      className="flex-1 px-4 py-2 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
                     />
                     {form.bonos_extras.length > 1 && (
                       <button
@@ -625,7 +625,7 @@ export default function CrearAgentePage() {
 
             {/* Mensaje de bienvenida */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <MessageCircle className="w-4 h-4 inline mr-1.5 text-amber-500" />
                 Mensaje de bienvenida{" "}
                 <span className="text-slate-400 font-normal">(opcional)</span>
@@ -635,24 +635,24 @@ export default function CrearAgentePage() {
                 value={form.mensaje_bienvenida}
                 onChange={(e) => setField("mensaje_bienvenida", e.target.value)}
                 placeholder="Deja vacío para usar el mensaje por defecto..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors resize-none"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors resize-none"
               />
             </div>
           </div>
 
           {/* ────────── SECCIÓN: Infraestructura ────────── */}
-          <div className="border border-slate-200 rounded-xl p-4 space-y-4">
-            <h2 className="text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+          <div className="border border-slate-200 dark:border-slate-700 rounded-xl p-4 space-y-4">
+            <h2 className="text-sm font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
               <Server className="w-4 h-4 text-amber-500" />
               Infraestructura (necesaria para tu bot)
             </h2>
-            <p className="text-xs text-slate-500 -mt-2">
+            <p className="text-xs text-slate-500 dark:text-slate-400 -mt-2">
               Crea cuentas gratuitas en cada servicio y pega aquí las credenciales.
             </p>
 
             {/* WhatsApp Token */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Bot className="w-4 h-4 inline mr-1.5 text-green-500" />
                 WhatsApp Business Token
               </label>
@@ -661,7 +661,7 @@ export default function CrearAgentePage() {
                 value={form.whatsapp_token}
                 onChange={(e) => setField("whatsapp_token", e.target.value)}
                 placeholder="EAALrZ..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
               <p className="text-xs text-slate-400 mt-1">
                 Meta Business → WhatsApp → Configuración → Token de acceso
@@ -670,7 +670,7 @@ export default function CrearAgentePage() {
 
             {/* WhatsApp Phone Number ID */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Bot className="w-4 h-4 inline mr-1.5 text-green-500" />
                 WhatsApp Phone Number ID <span className="text-red-400">*</span>
               </label>
@@ -680,7 +680,7 @@ export default function CrearAgentePage() {
                 value={form.whatsapp_phone_number_id}
                 onChange={(e) => setField("whatsapp_phone_number_id", e.target.value)}
                 placeholder="927564307104266"
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
               <p className="text-xs text-slate-400 mt-1">
                 Meta Business → WhatsApp → Configuración → Phone Number ID
@@ -689,7 +689,7 @@ export default function CrearAgentePage() {
 
             {/* Groq API Key */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Cpu className="w-4 h-4 inline mr-1.5 text-blue-500" />
                 Groq API Key <span className="text-red-400">*</span>
               </label>
@@ -699,7 +699,7 @@ export default function CrearAgentePage() {
                 value={form.groq_api_key}
                 onChange={(e) => setField("groq_api_key", e.target.value)}
                 placeholder="gsk_..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
               <p className="text-xs text-slate-400 mt-1">
                 Crea cuenta gratuita en{" "}
@@ -709,7 +709,7 @@ export default function CrearAgentePage() {
 
             {/* ImgBB API Key */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <ImageIcon className="w-4 h-4 inline mr-1.5 text-purple-500" />
                 ImgBB API Key <span className="text-red-400">*</span>
               </label>
@@ -719,7 +719,7 @@ export default function CrearAgentePage() {
                 value={form.imgbb_api_key}
                 onChange={(e) => setField("imgbb_api_key", e.target.value)}
                 placeholder="..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
               <p className="text-xs text-slate-400 mt-1">
                 Crea cuenta gratuita en{" "}
@@ -729,7 +729,7 @@ export default function CrearAgentePage() {
 
             {/* n8n URL */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Webhook className="w-4 h-4 inline mr-1.5 text-red-500" />
                 URL de tu n8n <span className="text-red-400">*</span>
               </label>
@@ -739,7 +739,7 @@ export default function CrearAgentePage() {
                 value={form.n8n_url}
                 onChange={(e) => setField("n8n_url", e.target.value)}
                 placeholder="https://tu-pikapod.pikapod.net"
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
               <p className="text-xs text-slate-400 mt-1">
                 Crea tu PikaPod en{" "}
@@ -749,7 +749,7 @@ export default function CrearAgentePage() {
 
             {/* n8n API Key */}
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
                 <Key className="w-4 h-4 inline mr-1.5 text-red-500" />
                 n8n API Key <span className="text-red-400">*</span>
               </label>
@@ -759,7 +759,7 @@ export default function CrearAgentePage() {
                 value={form.n8n_api_key}
                 onChange={(e) => setField("n8n_api_key", e.target.value)}
                 placeholder="n8n_api_..."
-                className="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
+                className="w-full px-4 py-2.5 text-sm border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-colors"
               />
               <p className="text-xs text-slate-400 mt-1">
                 n8n → Settings → API Keys → Create New → Full access
@@ -769,14 +769,14 @@ export default function CrearAgentePage() {
 
           {/* Error */}
           {error && (
-            <p className="text-sm text-red-500 bg-red-50 px-3 py-2 rounded-lg">{error}</p>
+            <p className="text-sm text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-950 px-3 py-2 rounded-lg">{error}</p>
           )}
 
           {/* Submit */}
           <button
             type="submit"
             disabled={loading || !canSubmit}
-            className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
+            className="w-full py-2.5 bg-amber-600 hover:bg-amber-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
           >
             {loading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
@@ -788,7 +788,7 @@ export default function CrearAgentePage() {
 
           <Link
             href="/"
-            className="w-full py-2 text-sm text-slate-400 hover:text-slate-600 transition-colors flex items-center justify-center gap-1.5"
+            className="w-full py-2 text-sm text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex items-center justify-center gap-1.5"
           >
             <ArrowLeft className="w-4 h-4" />
             Volver al dashboard

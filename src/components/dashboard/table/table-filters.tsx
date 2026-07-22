@@ -45,14 +45,14 @@ export function TableFilters({
           placeholder="Buscar telefono..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+          className="w-full pl-8 pr-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
         />
       </div>
 
       <select
         value={estadoFilter}
         onChange={(e) => setEstadoFilter(e.target.value as EstadoFilter)}
-        className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+        className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
       >
         <option value="todos">Todos estados</option>
         <option value="pagado">Pagado</option>
@@ -64,7 +64,7 @@ export function TableFilters({
       <select
         value={kitFilter}
         onChange={(e) => setKitFilter(e.target.value as KitFilter)}
-        className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+        className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
       >
         <option value="todos">Todos kits</option>
         {kitOptions.map((kit) => (
@@ -77,7 +77,7 @@ export function TableFilters({
       <select
         value={ofertaFilter}
         onChange={(e) => setOfertaFilter(e.target.value as OfertaFilter)}
-        className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+        className="flex-shrink-0 px-3 py-2 text-sm rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
       >
         <option value="todos">Todas ofertas</option>
         <option value="recibio">Recibio</option>

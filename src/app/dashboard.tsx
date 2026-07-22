@@ -64,14 +64,14 @@ export function Dashboard({
             />
           ) : (
             /* No active bot, no pending request → CTA */
-            <div className="bg-gradient-to-br from-slate-50 to-amber-50/30 border border-slate-200 rounded-2xl p-8 text-center">
-              <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-amber-100 flex items-center justify-center">
-                <Sparkles className="w-10 h-10 text-amber-600" />
+            <div className="bg-gradient-to-br from-slate-50 dark:from-slate-800 to-amber-50/30 dark:to-amber-950/30 border border-slate-200 dark:border-slate-700 rounded-2xl p-8 text-center">
+              <div className="w-20 h-20 mx-auto mb-5 rounded-2xl bg-amber-100 dark:bg-amber-950 flex items-center justify-center">
+                <Sparkles className="w-10 h-10 text-amber-600 dark:text-amber-400" />
               </div>
-              <h2 className="text-xl font-semibold text-slate-800 mb-2">
+              <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-2">
                 Potencia tu negocio con un Agente Virtual
               </h2>
-              <p className="text-sm text-slate-500 max-w-md mx-auto mb-6">
+              <p className="text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-6">
                 Automatiza tus ventas 24/7 con un bot de WhatsApp que atiende, responde
                 objeciones y cierra ventas por ti. Solo necesitas tu curso y nosotros lo
                 armamos.
@@ -157,19 +157,19 @@ function LockedFeature({
   description: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-slate-50/50 p-5">
-      <div className="absolute inset-0 backdrop-blur-[1px] bg-white/40 z-10" />
+    <div className="relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50 p-5">
+      <div className="absolute inset-0 backdrop-blur-[1px] bg-white/40 dark:bg-slate-900/40 z-10" />
       <div className="absolute top-3 right-3 z-20">
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200/80 text-xs font-medium text-slate-500">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-200/80 dark:bg-slate-700/80 text-xs font-medium text-slate-500 dark:text-slate-400">
           Próximamente
         </span>
       </div>
       <div className="relative z-0">
-        <div className="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+        <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500 mb-3">
           {icon}
         </div>
-        <h3 className="text-sm font-semibold text-slate-400 mb-1">{title}</h3>
-        <p className="text-xs text-slate-300">{description}</p>
+        <h3 className="text-sm font-semibold text-slate-400 dark:text-slate-500 mb-1">{title}</h3>
+        <p className="text-xs text-slate-300 dark:text-slate-600">{description}</p>
       </div>
     </div>
   );

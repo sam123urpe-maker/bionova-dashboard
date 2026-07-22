@@ -53,7 +53,7 @@ export function ClientsTable({
 
   return (
     <Card className="overflow-hidden">
-      <div className="p-3 border-b border-slate-100">
+      <div className="p-3 border-b border-slate-100 dark:border-slate-700">
         <TableFilters
           estadoFilter={estadoFilter}
           setEstadoFilter={(v) => { setEstadoFilter(v); setPage(1); }}
@@ -69,29 +69,29 @@ export function ClientsTable({
 
       <div className="overflow-x-auto">
         {onSelectLead && (
-          <p className="text-xs text-slate-400 px-3 pt-2 flex items-center gap-1">
+          <p className="text-xs text-slate-400 dark:text-slate-500 px-3 pt-2 flex items-center gap-1">
             <MessageCircle className="w-3 h-3" />
             Toca un numero para ver el chat
           </p>
         )}
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-slate-100 bg-slate-50/50">
-              <th className="text-left p-3 font-medium text-slate-600 sticky left-0 bg-slate-50/50 z-10 whitespace-nowrap">
+            <tr className="border-b border-slate-100 dark:border-slate-700 dark:border-slate-700 bg-slate-50/50 dark:bg-slate-800/50">
+              <th className="text-left p-3 font-medium text-slate-600 dark:text-slate-400 sticky left-0 bg-slate-50/50 z-10 whitespace-nowrap">
                 <span className="flex items-center gap-1">
                   <Phone className="w-3.5 h-3.5" />
                   Telefono
                 </span>
               </th>
-              <th className="text-left p-3 font-medium text-slate-600 whitespace-nowrap">Kit</th>
-              <th className="text-left p-3 font-medium text-slate-600 whitespace-nowrap">Estado</th>
-              <th className="text-right p-3 font-medium text-slate-600 whitespace-nowrap">
+              <th className="text-left p-3 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Kit</th>
+              <th className="text-left p-3 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">Estado</th>
+              <th className="text-right p-3 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">
                 Ofertas
               </th>
-              <th className="text-left p-3 font-medium text-slate-600 whitespace-nowrap">
+              <th className="text-left p-3 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">
                 Recibio
               </th>
-              <th className="text-right p-3 font-medium text-slate-600 whitespace-nowrap">
+              <th className="text-right p-3 font-medium text-slate-600 dark:text-slate-400 whitespace-nowrap">
                 Ultima interaccion
               </th>
             </tr>
@@ -99,7 +99,7 @@ export function ClientsTable({
           <tbody>
             {paged.length === 0 ? (
               <tr>
-                <td colSpan={6} className="p-8 text-center text-slate-400">
+                <td colSpan={6} className="p-8 text-center text-slate-400 dark:text-slate-500">
                   Sin resultados
                 </td>
               </tr>
@@ -108,9 +108,9 @@ export function ClientsTable({
                 <tr
                   key={c.id}
                   onClick={() => onSelectLead?.(c)}
-                  className={`group border-b border-slate-50 hover:bg-slate-50/50 transition-colors ${onSelectLead ? "cursor-pointer" : ""}`}
+                  className={`group border-b border-slate-50 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors ${onSelectLead ? "cursor-pointer" : ""}`}
                 >
-                  <td className="p-3 font-medium text-slate-800 sticky left-0 bg-white group-hover:bg-slate-50/50 z-10 whitespace-nowrap">
+                  <td className="p-3 font-medium text-slate-800 dark:text-slate-200 sticky left-0 bg-white dark:bg-slate-800 group-hover:bg-slate-50/50 dark:group-hover:bg-slate-800/50 z-10 whitespace-nowrap">
                     <span className="inline-flex items-center gap-1.5">
                       {c.telefono}
                       {onSelectLead && (
@@ -121,20 +121,20 @@ export function ClientsTable({
                     </span>
                   </td>
                   <td className="p-3 whitespace-nowrap">
-                    <span className="text-xs font-medium uppercase text-slate-500">
+                    <span className="text-xs font-medium uppercase text-slate-500 dark:text-slate-400">
                       {c.kit}
                     </span>
                   </td>
                   <td className="p-3 whitespace-nowrap">
                     <StatusBadge estado={c.estado} />
                   </td>
-                  <td className="p-3 text-right tabular-nums text-slate-700 whitespace-nowrap">
+                  <td className="p-3 text-right tabular-nums text-slate-700 dark:text-slate-300 whitespace-nowrap">
                     {c.ofertas_enviadas}
                   </td>
                   <td className="p-3 whitespace-nowrap">
                     <OfertaBadge oferta={c.recibio_oferta} />
                   </td>
-                  <td className="p-3 text-right text-slate-500 text-xs whitespace-nowrap tabular-nums">
+                  <td className="p-3 text-right text-slate-500 dark:text-slate-400 text-xs whitespace-nowrap tabular-nums">
                     {formatDate(c.ultima_interaccion)}
                   </td>
                 </tr>
@@ -144,7 +144,7 @@ export function ClientsTable({
         </table>
       </div>
 
-      <div className="p-3 border-t border-slate-100">
+      <div className="p-3 border-t border-slate-100 dark:border-slate-700">
         <TablePagination page={safePage} totalPages={totalPages} setPage={setPage} />
       </div>
     </Card>

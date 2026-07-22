@@ -183,7 +183,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
   return (
     <div className="relative">
       {/* Glass background */}
-      <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-white/50 shadow-lg shadow-slate-200/30 p-2">
+      <div className="bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-lg shadow-slate-200/30 dark:shadow-slate-950/30 p-2">
         <div className="flex items-center gap-1.5 flex-wrap">
           {/* Hoy */}
           <button
@@ -191,7 +191,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               isActive("hoy")
                 ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm"
+                : "bg-white/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-sm"
             }`}
           >
             <Sun className="w-4 h-4" />
@@ -204,7 +204,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               isActive("ayer")
                 ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm"
+                : "bg-white/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-sm"
             }`}
           >
             <Moon className="w-4 h-4" />
@@ -217,7 +217,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               periodo === "semana"
                 ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm"
+                : "bg-white/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-sm"
             }`}
           >
             <CalendarDays className="w-4 h-4" />
@@ -230,7 +230,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               periodo === "mes"
                 ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm"
+                : "bg-white/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-sm"
             }`}
           >
             <CalendarRange className="w-4 h-4" />
@@ -243,14 +243,14 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               isActive("todo")
                 ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm"
+                : "bg-white/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-sm"
             }`}
           >
             <Layers className="w-4 h-4" />
             Todo
           </button>
 
-          <div className="h-8 w-px bg-slate-200/80 mx-1 hidden sm:block" />
+          <div className="h-8 w-px bg-slate-200/80 dark:bg-slate-600/50 mx-1 hidden sm:block" />
 
           {/* Elegir dia */}
           <button
@@ -268,7 +268,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
               periodo === "personalizado"
                 ? "bg-amber-500 text-white shadow-md shadow-amber-500/25"
-                : "bg-white/60 text-slate-600 hover:bg-white hover:text-slate-800 hover:shadow-sm"
+                : "bg-white/60 dark:bg-slate-700/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:text-slate-800 dark:hover:text-slate-100 hover:shadow-sm"
             }`}
           >
             <Calendar className="w-4 h-4" />
@@ -288,7 +288,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                 setFecha(today);
                 setExpanded(null);
               }}
-              className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+              className="p-2 rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -299,8 +299,8 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
       {/* Week grid */}
       {expanded === "semana" && (
         <div className="absolute top-full left-0 right-0 mt-2 z-30">
-          <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl shadow-slate-300/30 p-4">
-            <h4 className="text-sm font-semibold text-slate-500 mb-3 px-1">
+          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl shadow-slate-300/30 dark:shadow-slate-950/30 p-4">
+            <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 px-1">
               Selecciona una semana
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -313,14 +313,14 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                     onClick={() => selectWeek(w)}
                     className={`text-left p-3 rounded-xl border transition-all hover:shadow-sm ${
                       isSelectedWeek || (i === 0 && periodo === "semana" && !fecha)
-                        ? "border-amber-300 bg-amber-50"
-                        : "border-slate-100 hover:border-amber-200 hover:bg-amber-50/50"
+                        ? "border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-950"
+                        : "border-slate-100 dark:border-slate-700 hover:border-amber-200 dark:hover:border-amber-600 hover:bg-amber-50/50 dark:hover:bg-amber-950/50"
                     }`}
                   >
-                    <p className="text-sm font-semibold text-slate-800">
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                       {w.label}
                     </p>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                       {w.start.toLocaleDateString("es-PE", { day: "numeric", month: "short" })}{" "}
                       -{" "}
                       {w.end.toLocaleDateString("es-PE", { day: "numeric", month: "short" })}
@@ -336,8 +336,8 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
       {/* Month grid */}
       {expanded === "mes" && (
         <div className="absolute top-full left-0 right-0 mt-2 z-30">
-          <div className="bg-white/95 backdrop-blur-xl rounded-2xl border border-white/50 shadow-xl shadow-slate-300/30 p-4">
-            <h4 className="text-sm font-semibold text-slate-500 mb-3 px-1">
+          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl rounded-2xl border border-white/50 dark:border-slate-700/50 shadow-xl shadow-slate-300/30 dark:shadow-slate-950/30 p-4">
+            <h4 className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 px-1">
               Selecciona un mes
             </h4>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
@@ -350,11 +350,11 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                     onClick={() => selectMonth(m)}
                     className={`text-center p-3 rounded-xl border transition-all hover:shadow-sm ${
                       isSelectedMonth || (i === 0 && periodo === "mes" && !fecha)
-                        ? "border-amber-300 bg-amber-50"
-                        : "border-slate-100 hover:border-amber-200 hover:bg-amber-50/50"
+                        ? "border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-950"
+                        : "border-slate-100 dark:border-slate-700 hover:border-amber-200 dark:hover:border-amber-600 hover:bg-amber-50/50 dark:hover:bg-amber-950/50"
                     }`}
                   >
-                    <p className="text-sm font-semibold text-slate-800">
+                    <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                       {m.label}
                     </p>
                   </button>
@@ -377,11 +377,11 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                     return { month: d.getMonth(), year: d.getFullYear() };
                   })
                 }
-                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <span className="text-sm font-semibold text-slate-700">
+              <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {MESES[calMonth.month]} {calMonth.year}
               </span>
               <button
@@ -391,7 +391,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                     return { month: d.getMonth(), year: d.getFullYear() };
                   })
                 }
-                className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 transition-colors"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -399,7 +399,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
 
             <div className="grid grid-cols-7 mb-1">
               {DIAS_SEMANA.map((d) => (
-                <div key={d} className="text-center text-xs font-medium text-slate-400 py-1">
+                <div key={d} className="text-center text-xs font-medium text-slate-400 dark:text-slate-500 py-1">
                   {d}
                 </div>
               ))}
@@ -423,8 +423,8 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                       isSelected
                         ? "bg-amber-500 text-white shadow-sm"
                         : isToday
-                        ? "bg-amber-100 text-amber-700 hover:bg-amber-200"
-                        : "text-slate-600 hover:bg-slate-100"
+                        ? "bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-400 hover:bg-amber-200 dark:hover:bg-amber-900"
+                        : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700"
                     }`}
                   >
                     {day}
@@ -443,7 +443,7 @@ export function DateFilter({ periodo, setPeriodo, fecha, setFecha }: Props) {
                   year: new Date(today + "T00:00:00").getFullYear(),
                 });
               }}
-              className="mt-3 w-full py-2 text-sm font-medium text-amber-600 bg-amber-50 rounded-xl hover:bg-amber-100 transition-colors"
+              className="mt-3 w-full py-2 text-sm font-medium text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950 rounded-xl hover:bg-amber-100 dark:hover:bg-amber-900 transition-colors"
             >
               Ir a Hoy
             </button>

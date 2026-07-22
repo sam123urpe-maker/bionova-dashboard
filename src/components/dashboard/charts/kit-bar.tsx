@@ -46,8 +46,8 @@ export function KitBar({ leads }: { leads: Lead[] }) {
   if (leads.length === 0) {
     return (
       <Card className="p-4">
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">Por Kit</h3>
-        <p className="text-slate-400 text-sm text-center py-8">Sin datos</p>
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Por Kit</h3>
+        <p className="text-slate-400 dark:text-slate-500 text-sm text-center py-8">Sin datos</p>
       </Card>
     );
   }

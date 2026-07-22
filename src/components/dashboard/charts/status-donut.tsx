@@ -42,8 +42,8 @@ export function StatusDonut({ leads }: { leads: Lead[] }) {
   if (total === 0) {
     return (
       <Card className="p-4">
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">Por Estado</h3>
-        <p className="text-slate-400 text-sm text-center py-8">Sin datos</p>
+        <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-200 mb-3">Por Estado</h3>
+        <p className="text-slate-400 dark:text-slate-500 text-sm text-center py-8">Sin datos</p>
       </Card>
     );
   }
@@ -80,7 +80,7 @@ export function StatusDonut({ leads }: { leads: Lead[] }) {
               iconType="circle"
               iconSize={8}
               formatter={(value: string) => (
-                <span className="text-xs text-slate-600">{value}</span>
+                <span className="text-xs text-slate-600 dark:text-slate-300">{value}</span>
               )}
             />
           </PieChart>
