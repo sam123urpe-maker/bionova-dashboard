@@ -285,8 +285,8 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
                           <p className="text-xs text-white/60 mb-0.5">Agente</p>
                         )}
 
-                        {/* Text content */}
-                        {m.contenido && (
+                        {/* Text content - skip for images (URL is shown as image) */}
+                        {m.contenido && m.tipo !== "imagen" && (
                           <p
                             className="text-sm whitespace-pre-wrap break-words"
                             dangerouslySetInnerHTML={{
@@ -295,21 +295,20 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
                           />
                         )}
 
-                        {/* Image */}
-                        {m.tipo === "imagen" && m.url_adjunto && (
+                        {/* Image - from url_adjunto or contenido (ImgBB URL) */}
+                        {m.tipo === "imagen" && (m.url_adjunto || m.contenido) && (
                           <button
-                            onClick={() => setLightboxUrl(m.url_adjunto!)}
+                            onClick={() => setLightboxUrl((m.url_adjunto || m.contenido)!)}
                             className="mt-1 rounded-lg overflow-hidden block w-full max-w-[240px] hover:opacity-90 transition-opacity"
                           >
                             <img
-                              src={m.url_adjunto}
+                              src={m.url_adjunto || m.contenido}
                               alt="Imagen"
                               className="w-full h-auto max-h-[200px] object-cover rounded-lg"
                               loading="lazy"
                             />
                           </button>
                         )}
-
                         {/* Audio */}
                         {m.tipo === "audio" && m.url_adjunto && (
                           <AudioPlayer url={m.url_adjunto} duracion={m.duracion_segundos} />
