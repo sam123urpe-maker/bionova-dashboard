@@ -302,7 +302,7 @@ export function MessageViewer({ telefono, onClose }: MessageViewerProps) {
                             className="mt-1 rounded-lg overflow-hidden block w-full max-w-[240px] hover:opacity-90 transition-opacity"
                           >
                             <img
-                              src={m.url_adjunto || m.contenido}
+                              src={m.url_adjunto || m.contenido || undefined}
                               alt="Imagen"
                               className="w-full h-auto max-h-[200px] object-cover rounded-lg"
                               loading="lazy"
